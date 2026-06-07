@@ -10,7 +10,7 @@ const events = [
     image: "/images/akad.jpg",
     date: "12 Juli 2026",
     time: "07.00 WIB",
-    place: "Masjid Agung Sampang",
+    place: "Masjid Agung Bangkalan,",
   },
   {
     type: "Wedding Reception",
@@ -18,7 +18,7 @@ const events = [
     image: "/images/resepsi.jpg",
     date: "12 Juli 2026",
     time: "09.00 - 12.00 WIB",
-    place: "Gedung Rato Ebu, Sampang",
+    place: "Gedung Rato Ebu, Bangkalan",
   },
 ];
 
@@ -449,7 +449,7 @@ export default function EventDetail() {
           "
         >
           <a
-            href="https://maps.google.com"
+            href="https://maps.app.goo.gl/TUZzpRyyXkAUYRXL7"
             target="_blank"
             className="
             text-center

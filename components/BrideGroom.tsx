@@ -162,7 +162,7 @@ export default function BrideGroom() {
             mt-4
             "
           >
-            <div className="w-12 h-px bg-[#d4b483]" />
+            <div className="w-0 h-px bg-[#d4b483]" />
             <div className="text-[#d4b483]">✦</div>
             <div className="w-12 h-px bg-[#d4b483]" />
           </div>

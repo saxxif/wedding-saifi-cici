@@ -640,10 +640,10 @@ export default function Hero() {
         className="
         absolute
         bottom-0
-        left-1/2
+        left-3/7
         -translate-x-1/2
         z-20
-        w-[92%]
+        w-[100%]
         max-w-[720px]
         "
       >
