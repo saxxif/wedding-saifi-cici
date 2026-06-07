@@ -242,22 +242,7 @@ export default function Countdown() {
               fontFamily: "var(--font-cormorant)",
             }}
           >
-            Saifi
-            <br />
-            &
-            <br />
-            Nicky
           </h2>
-
-          <p
-            className="
-            mt-4
-            text-white/60
-            text-sm
-            "
-          >
-            Counting down to forever.
-          </p>
 
           <div
             className="

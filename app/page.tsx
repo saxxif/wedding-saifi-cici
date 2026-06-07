@@ -1,5 +1,5 @@
 "use client";
-
+import MusicPlayer from "@/components/MusicPlayer";
 import Hero from "@/components/Hero";
 import BrideGroom from "@/components/BrideGroom";
 import Countdown from "@/components/Countdown";
@@ -19,6 +19,7 @@ export default function Home() {
       bg-[#faf8f4]
       "
     >
+      <MusicPlayer />
       {/* Hero */}
       <Hero />
 

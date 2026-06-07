@@ -9,17 +9,31 @@ export default function BrideGroom() {
       className="
       relative
       overflow-hidden
+      bg-[#faf8f4]
       py-24
-      bg-[#f8f5ef]
       "
     >
       {/* Background */}
-      <div className="absolute inset-0 overflow-hidden">
+
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[#faf8f4]" />
+
         <div
           className="
           absolute
-          inset-0
-          bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.08),transparent_70%)]
+          left-1/2
+          top-1/2
+          -translate-x-1/2
+          -translate-y-1/2
+
+          h-[700px]
+          w-[700px]
+
+          rounded-full
+
+          bg-[#ead9bb]/20
+
+          blur-[180px]
           "
         />
 
@@ -27,41 +41,74 @@ export default function BrideGroom() {
           className="
           absolute
           inset-0
+
+          opacity-[0.03]
+
           flex
           items-center
           justify-center
 
-          text-[180px]
+          text-[240px]
 
-          text-[#d4af37]/[0.03]
-
-          pointer-events-none
+          text-[#b08d57]
           "
           style={{
             fontFamily: "var(--font-cormorant)",
           }}
         >
-          SN
+          NS
         </div>
       </div>
+
+      {/* Floating Dust */}
+
+      {[...Array(12)].map((_, i) => (
+        <motion.div
+          key={i}
+          animate={{
+            y: [0, -700],
+            opacity: [0, 1, 1, 0],
+          }}
+          transition={{
+            duration: 15 + i,
+            repeat: Infinity,
+            ease: "linear",
+            delay: i * 0.7,
+          }}
+          className="
+          absolute
+
+          h-[2px]
+          w-[2px]
+
+          rounded-full
+
+          bg-[#d4b483]
+          "
+          style={{
+            left: `${(i * 9) % 100}%`,
+            bottom: "-20px",
+          }}
+        />
+      ))}
 
       <div
         className="
         relative
         z-10
 
-        max-w-md
+        max-w-[620px]
         mx-auto
 
-        px-5
+        px-7
         "
       >
-        {/* Heading */}
+        {/* Header */}
 
         <motion.div
           initial={{
             opacity: 0,
-            y: 20,
+            y: 30,
           }}
           whileInView={{
             opacity: 1,
@@ -70,68 +117,74 @@ export default function BrideGroom() {
           viewport={{
             once: true,
           }}
-          className="text-center"
+          transition={{
+            duration: 1,
+          }}
+          className="
+          text-center
+          "
         >
-          <p
+          <div
             className="
-            uppercase
-
-            tracking-[5px]
-
-            text-[#b08d57]
-
-            text-[10px]
+            text-[#d4b483]
+            text-xl
             "
           >
-            Bride & Groom
-          </p>
+            ✦
+          </div>
 
           <h2
             className="
-            mt-3
+            mt-2
 
-            text-[42px]
+            text-[46px]
+            md:text-[62px]
 
-            leading-[0.95]
+            text-[#b08d57]
 
-            text-[#1b1b1b]
+            leading-none
             "
             style={{
               fontFamily: "var(--font-cormorant)",
             }}
           >
-            Meet The Couple
+            Bride & Groom
           </h2>
 
           <div
             className="
-            w-20
-            h-px
+            flex
+            items-center
+            justify-center
 
-            bg-gradient-to-r
-            from-transparent
-            via-[#d4af37]
-            to-transparent
+            gap-3
 
-            mx-auto
-            mt-5
+            mt-4
             "
-          />
+          >
+            <div className="w-12 h-px bg-[#d4b483]" />
+            <div className="text-[#d4b483]">✦</div>
+            <div className="w-12 h-px bg-[#d4b483]" />
+          </div>
 
           <p
             className="
-            mt-6
+            mt-7
 
-            text-sm
+            uppercase
 
-            text-gray-500
+            tracking-[0.3em]
+
+            text-[10px]
 
             leading-7
+
+            text-[#7a6f61]
             "
           >
-            Dengan memohon rahmat dan ridho Allah SWT,
-            kami mempersembahkan kedua mempelai yang
-            akan melangsungkan pernikahan.
+            With The Grace Of Allah, We Joyfully Invite You
+            <br />
+            To Our Beginning Of Forever
           </p>
         </motion.div>
 
@@ -140,7 +193,7 @@ export default function BrideGroom() {
         <motion.div
           initial={{
             opacity: 0,
-            y: 40,
+            y: 60,
           }}
           whileInView={{
             opacity: 1,
@@ -150,129 +203,178 @@ export default function BrideGroom() {
             once: true,
           }}
           transition={{
-            duration: 0.8,
+            duration: 1,
           }}
           className="
-          mt-14
+          mt-16
 
-          bg-white
-
-          rounded-[32px]
-
-          overflow-hidden
-
-          shadow-[0_20px_60px_rgba(0,0,0,0.06)]
+          text-center
           "
         >
-          <img
-            src="/images/cici.jpg"
-            alt="Nicky"
+          <p
             className="
-            w-full
-            h-[300px]
-            object-cover
+            uppercase
+
+            tracking-[0.3em]
+
+            text-[10px]
+
+            text-[#b08d57]
+            "
+          >
+            ✦ THE BRIDE ✦
+          </p>
+
+          <div
+            className="
+            w-10
+            h-px
+
+            bg-[#d4b483]
+
+            mx-auto
+
+            mt-3
+            mb-6
             "
           />
 
-          <div className="p-8 text-center">
-            <p
-              className="
-              uppercase
+          <div
+            className="
+            relative
 
-              tracking-[4px]
-
-              text-[#b08d57]
-
-              text-[10px]
-              "
-            >
-              THE BRIDE
-            </p>
-
-            <h3
-              className="
-              mt-3
-
-              text-[42px]
-
-              leading-none
-
-              text-[#1b1b1b]
-              "
-              style={{
-                fontFamily: "var(--font-cormorant)",
-              }}
-            >
-              Nicky
-            </h3>
-
-            <p className="text-gray-500 mt-2">
-              S.Kep., Ns
-            </p>
-
+            max-w-[300px]
+            mx-auto
+            "
+          >
             <div
               className="
-              w-20
-              h-px
+              border-[2px]
+              border-[#d9c49a]
 
-              bg-[#d4af37]
+              rounded-[24px]
 
-              mx-auto
+              p-[6px]
 
-              my-6
-              "
-            />
-
-            <p
-              className="
-              text-gray-600
-
-              leading-8
+              bg-white
               "
             >
-              Putri Pertama dari
-              <br />
-              Bapak XXXXX
-              <br />
-              & Ibu XXXXX
-            </p>
+              <div className="overflow-hidden rounded-[18px]">
+                <motion.img
+                  src="/images/cici.jpg"
+                  alt=""
+                  animate={{
+                    scale: [1, 1.02, 1],
+                  }}
+                  transition={{
+                    duration: 10,
+                    repeat: Infinity,
+                  }}
+                  className="
+                  w-full
+
+                  aspect-[4/5]
+
+                  object-cover
+                  "
+                />
+              </div>
+            </div>
           </div>
+
+          <h3
+            className="
+            mt-5
+
+            text-[32px]
+
+            text-[#b08d57]
+            "
+            style={{
+              fontFamily: "var(--font-cormorant)",
+            }}
+          >
+            Nicy Citra Auliya
+          </h3>
+
+          <div
+            className="
+            w-14
+            h-px
+
+            bg-[#d4b483]
+
+            mx-auto
+
+            my-4
+            "
+          />
+
+          <p
+            className="
+            uppercase
+
+            tracking-[0.28em]
+
+            text-[10px]
+
+            leading-7
+
+            text-[#746a5e]
+            "
+          >
+            A Beautiful Chapter
+            <br />
+            Written By The Hand Of Allah
+          </p>
         </motion.div>
 
-        {/* AMPERSAND */}
+        {/* CENTER */}
 
         <motion.div
           initial={{
-            scale: 0,
             opacity: 0,
+            scale: 0.8,
           }}
           whileInView={{
-            scale: 1,
             opacity: 1,
+            scale: 1,
           }}
           viewport={{
             once: true,
           }}
           transition={{
-            duration: 0.8,
+            duration: 1,
           }}
           className="
-          flex
-          justify-center
+          my-14
 
-          my-10
+          flex
+          items-center
+          justify-center
           "
         >
-          <div
+          <div className="flex-1 h-px bg-[#d4b483]" />
+
+          <motion.div
+            animate={{
+              rotate: [0, 360],
+            }}
+            transition={{
+              duration: 30,
+              repeat: Infinity,
+              ease: "linear",
+            }}
             className="
-            w-24
-            h-24
+            mx-5
+
+            h-[70px]
+            w-[70px]
 
             rounded-full
 
-            bg-white
-
-            shadow-[0_20px_50px_rgba(0,0,0,0.08)]
+            border
+            border-[#d4b483]
 
             flex
             items-center
@@ -281,9 +383,9 @@ export default function BrideGroom() {
           >
             <span
               className="
-              text-[60px]
+              text-[46px]
 
-              text-[#b08d57]
+              text-[#c8a970]
               "
               style={{
                 fontFamily: "var(--font-cormorant)",
@@ -291,7 +393,9 @@ export default function BrideGroom() {
             >
               &
             </span>
-          </div>
+          </motion.div>
+
+          <div className="flex-1 h-px bg-[#d4b483]" />
         </motion.div>
 
         {/* GROOM */}
@@ -299,7 +403,7 @@ export default function BrideGroom() {
         <motion.div
           initial={{
             opacity: 0,
-            y: 40,
+            y: 60,
           }}
           whileInView={{
             opacity: 1,
@@ -309,92 +413,160 @@ export default function BrideGroom() {
             once: true,
           }}
           transition={{
-            duration: 0.8,
+            duration: 1,
           }}
           className="
-          bg-white
-
-          rounded-[32px]
-
-          overflow-hidden
-
-          shadow-[0_20px_60px_rgba(0,0,0,0.06)]
+          text-center
           "
         >
-          <img
-            src="/images/saifi.jpg"
-            alt="Saifi"
+          <p
             className="
-            w-full
-            h-[300px]
-            object-cover
+            uppercase
+
+            tracking-[0.3em]
+
+            text-[10px]
+
+            text-[#b08d57]
+            "
+          >
+            ✦ THE GROOM ✦
+          </p>
+
+          <div
+            className="
+            w-10
+            h-px
+
+            bg-[#d4b483]
+
+            mx-auto
+
+            mt-3
+            mb-6
             "
           />
 
-          <div className="p-8 text-center">
-            <p
-              className="
-              uppercase
+          <div
+            className="
+            relative
 
-              tracking-[4px]
-
-              text-[#b08d57]
-
-              text-[10px]
-              "
-            >
-              THE GROOM
-            </p>
-
-            <h3
-              className="
-              mt-3
-
-              text-[42px]
-
-              leading-none
-
-              text-[#1b1b1b]
-              "
-              style={{
-                fontFamily: "var(--font-cormorant)",
-              }}
-            >
-              Saifi
-            </h3>
-
-            <p className="text-gray-500 mt-2">
-              S.Tr.T.
-            </p>
-
+            max-w-[300px]
+            mx-auto
+            "
+          >
             <div
               className="
-              w-20
-              h-px
+              border-[2px]
+              border-[#d9c49a]
 
-              bg-[#d4af37]
+              rounded-[24px]
 
-              mx-auto
+              p-[6px]
 
-              my-6
-              "
-            />
-
-            <p
-              className="
-              text-gray-600
-
-              leading-8
+              bg-white
               "
             >
-              Putra Pertama dari
-              <br />
-              Bapak XXXXX
-              <br />
-              & Ibu XXXXX
-            </p>
+              <div className="overflow-hidden rounded-[18px]">
+                <motion.img
+                  src="/images/saifi.jpg"
+                  alt=""
+                  animate={{
+                    scale: [1, 1.02, 1],
+                  }}
+                  transition={{
+                    duration: 10,
+                    repeat: Infinity,
+                  }}
+                  className="
+                  w-full
+
+                  aspect-[4/5]
+
+                  object-cover
+                  "
+                />
+              </div>
+            </div>
           </div>
+
+          <h3
+            className="
+            mt-5
+
+            text-[32px]
+
+            text-[#b08d57]
+            "
+            style={{
+              fontFamily: "var(--font-cormorant)",
+            }}
+          >
+            Saifi Hidayatullah
+          </h3>
+
+          <div
+            className="
+            w-14
+            h-px
+
+            bg-[#d4b483]
+
+            mx-auto
+
+            my-4
+            "
+          />
+
+          <p
+            className="
+            uppercase
+
+            tracking-[0.28em]
+
+            text-[10px]
+
+            leading-7
+
+            text-[#746a5e]
+            "
+          >
+            And I Found You,
+            <br />
+            And My Life Found Its Home
+          </p>
         </motion.div>
+
+        {/* Bottom Ornament */}
+
+        <div
+          className="
+          mt-16
+
+          flex
+          items-center
+          justify-center
+
+          gap-3
+          "
+        >
+          <div className="flex-1 h-px bg-[#d4b483]" />
+
+          <div
+            className="
+            text-[40px]
+
+            text-[#c8a970]
+            "
+            style={{
+              fontFamily: "var(--font-cormorant)",
+            }}
+          >
+            NS
+          </div>
+
+          <div className="flex-1 h-px bg-[#d4b483]" />
+        </div>
       </div>
     </section>
   );
