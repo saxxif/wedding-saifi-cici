@@ -7,23 +7,42 @@ import OurStory from "@/components/OurStory";
 import EventDetail from "@/components/EventDetail";
 import Gallery from "@/components/Gallery";
 import LoveQuote from "@/components/LoveQuote";
+import WeddingGift from "@/components/WeddingGift";
 
 
 export default function Home() {
   return (
-    <main className="overflow-x-hidden">
-
+    <main
+      className="
+      relative
+      overflow-x-hidden
+      bg-[#faf8f4]
+      "
+    >
+      {/* Hero */}
       <Hero />
 
+      {/* Bride & Groom */}
       <BrideGroom />
 
+      {/* Countdown */}
       <Countdown />
 
+      {/* Love Journey */}
       <OurStory />
 
+      {/* Wedding Event */}
       <EventDetail />
+
+      {/* Gallery */}
       <Gallery />
-      <LoveQuote />
+
+      {/* Wedding Gift */}
+      <WeddingGift />
+
+     
+
+
     </main>
   );
 }

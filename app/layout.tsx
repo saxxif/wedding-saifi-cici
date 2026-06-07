@@ -1,21 +1,25 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Poppins } from "next/font/google";
+import {
+  Cormorant_Garamond,
+  Montserrat,
+} from "next/font/google";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   variable: "--font-cormorant",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const poppins = Poppins({
+const montserrat = Montserrat({
   subsets: ["latin"],
+  variable: "--font-body",
   weight: ["300", "400", "500", "600"],
-  variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
   title: "Saifi & Cici Wedding",
-  description: "Wedding Invitation",
+  description: "Luxury Wedding Invitation",
 };
 
 export default function RootLayout({
@@ -24,11 +28,41 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`
+        ${cormorant.variable}
+        ${montserrat.variable}
+      `}
+    >
       <body
-        className={`${cormorant.variable} ${poppins.variable}`}
+        className="
+        bg-[#111111]
+        antialiased
+        overflow-x-hidden
+        "
       >
-        {children}
+        <main
+          className="
+          relative
+
+          w-full
+
+          max-w-[430px]
+
+          min-h-screen
+
+          mx-auto
+
+          bg-[#faf8f4]
+
+          overflow-hidden
+
+          shadow-[0_0_100px_rgba(0,0,0,0.35)]
+          "
+        >
+          {children}
+        </main>
       </body>
     </html>
   );

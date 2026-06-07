@@ -2,12 +2,12 @@
 
 import { motion } from "framer-motion";
 
-const particles = Array.from({ length: 15 }, (_, i) => ({
+const particles = Array.from({ length: 18 }, (_, i) => ({
   id: i,
-  left: (i * 73) % 100,
+  left: (i * 67) % 100,
   size: 2 + (i % 3),
-  duration: 20 + (i % 8),
-  delay: i * 0.8,
+  duration: 18 + (i % 8),
+  delay: i * 0.6,
 }));
 
 export default function Hero() {
@@ -16,9 +16,9 @@ export default function Hero() {
 
     if (!target) return;
 
-    window.scrollTo({
-      top: target.offsetTop,
+    target.scrollIntoView({
       behavior: "smooth",
+      block: "start",
     });
   };
 
@@ -31,12 +31,13 @@ export default function Hero() {
       flex
       items-center
       justify-center
+      px-5
       "
     >
-      {/* Background */}
+      {/* Background Image */}
       <motion.div
         animate={{
-          scale: [1.08, 1, 1.03],
+          scale: [1.05, 1, 1.05],
         }}
         transition={{
           duration: 25,
@@ -54,57 +55,58 @@ export default function Hero() {
         }}
       />
 
-      {/* Cinematic Overlay */}
+      {/* Dark Layer */}
+      <div className="absolute inset-0 bg-black/55" />
+
+      {/* Cinematic Vignette */}
       <div
         className="
         absolute
         inset-0
-
-        bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.15),rgba(0,0,0,0.88))]
-        "
-      />
-
-      {/* Vignette */}
-      <div
-        className="
-        absolute
-        inset-0
-
-        bg-[radial-gradient(circle,transparent_35%,rgba(0,0,0,0.85)_100%)]
+        bg-[radial-gradient(circle_at_center,transparent_15%,rgba(0,0,0,0.88)_100%)]
         "
       />
 
       {/* Gold Glow */}
-      <div
+      <motion.div
+        animate={{
+          opacity: [0.25, 0.45, 0.25],
+          scale: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+        }}
         className="
         absolute
-
         left-1/2
         top-1/2
-
         -translate-x-1/2
         -translate-y-1/2
 
-        w-[1200px]
-        h-[1200px]
+        w-[500px]
+        h-[500px]
+
+        md:w-[1200px]
+        md:h-[1200px]
 
         rounded-full
 
-        bg-[#d4b483]/10
+        bg-[#d4b483]/20
 
-        blur-[250px]
+        blur-[180px]
         "
       />
 
-      {/* Floating Gold Dust */}
+      {/* Floating Particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {particles.map((particle) => (
           <motion.div
             key={particle.id}
             animate={{
               y: [0, -1200],
-              opacity: [0, 0.9, 0.9, 0],
               x: [0, 20, -15, 10],
+              opacity: [0, 1, 1, 0],
             }}
             transition={{
               duration: particle.duration,
@@ -115,10 +117,8 @@ export default function Hero() {
             className="
             absolute
             rounded-full
-
             bg-[#d4b483]
-
-            shadow-[0_0_25px_rgba(212,180,131,0.8)]
+            shadow-[0_0_20px_rgba(212,180,131,0.8)]
             "
             style={{
               left: `${particle.left}%`,
@@ -130,310 +130,313 @@ export default function Hero() {
         ))}
       </div>
 
+      {/* Content */}
       <div
         className="
         relative
         z-20
 
         w-full
-        max-w-6xl
+        max-w-4xl
 
         mx-auto
-        px-6
+        text-center
         "
       >
-        <div
-          className="
-          relative
-
-          rounded-[40px]
-          md:rounded-[60px]
-
-          border
-          border-[#d4b483]/15
-
-          bg-black/20
-
-          backdrop-blur-md
-
-          px-6
-          md:px-16
-
-          py-14
-          md:py-24
-          "
+        {/* Top Ornament */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex justify-center mb-6"
         >
-          {/* Inner Border */}
           <div
             className="
-            absolute
-            inset-[1px]
+            h-px
+            w-20
 
-            rounded-[40px]
-            md:rounded-[60px]
-
-            border
-            border-[#d4b483]/10
-
-            pointer-events-none
+            bg-gradient-to-r
+            from-transparent
+            via-[#d4b483]
+            to-transparent
             "
           />
+        </motion.div>
 
-          {/* Top Ornament */}
+        {/* Subtitle */}
+        <motion.p
+          initial={{
+            opacity: 0,
+            y: -20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 1,
+          }}
+          className="
+          uppercase
+
+          tracking-[4px]
+          md:tracking-[10px]
+
+          text-[10px]
+          md:text-sm
+
+          text-[#d4b483]
+
+          font-light
+          "
+        >
+          THE WEDDING OF
+        </motion.p>
+
+        {/* Names */}
+        <motion.h1
+          initial={{
+            opacity: 0,
+            y: 40,
+            filter: "blur(10px)",
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+          }}
+          transition={{
+            duration: 1.8,
+          }}
+          className="
+          mt-6
+
+          leading-[0.95]
+
+          text-white
+
+          text-[48px]
+          sm:text-[60px]
+          md:text-[120px]
+          lg:text-[150px]
+
+          font-light
+
+          tracking-[-0.03em]
+
+          drop-shadow-[0_10px_40px_rgba(0,0,0,0.9)]
+          "
+          style={{
+            fontFamily: "var(--font-cormorant)",
+          }}
+        >
+          Saifi
+
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex justify-center"
-          >
-            <div
-              className="
-              w-24
-              h-px
-
-              bg-gradient-to-r
-              from-transparent
-              via-[#d4b483]
-              to-transparent
-              "
-            />
-          </motion.div>
-
-          <motion.p
-            initial={{
-              opacity: 0,
-              y: -20,
-            }}
             animate={{
-              opacity: 1,
-              y: 0,
+              scale: [1, 1.08, 1],
             }}
             transition={{
-              duration: 1,
+              duration: 4,
+              repeat: Infinity,
             }}
             className="
-            text-center
+            text-[#d4b483]
 
-            uppercase
+            text-[28px]
+            md:text-[60px]
 
-            tracking-[12px]
+            my-1
+            "
+          >
+            &
+          </motion.div>
 
-            text-[11px]
-            md:text-sm
+          Nicky
+        </motion.h1>
+
+        {/* Tagline */}
+        <motion.p
+          initial={{
+            opacity: 0,
+          }}
+          animate={{
+            opacity: 1,
+          }}
+          transition={{
+            delay: 0.8,
+          }}
+          className="
+          mt-5
+
+          uppercase
+
+          tracking-[2px]
+          md:tracking-[8px]
+
+          text-[11px]
+          md:text-base
+
+          text-white/75
+          "
+        >
+          Forever Begins Here
+        </motion.p>
+
+        {/* Divider */}
+        <motion.div
+          initial={{
+            opacity: 0,
+          }}
+          animate={{
+            opacity: 1,
+          }}
+          transition={{
+            delay: 1,
+          }}
+          className="flex justify-center mt-6"
+        >
+          <div
+            className="
+            h-px
+            w-28
+            md:w-44
+
+            bg-gradient-to-r
+            from-transparent
+            via-[#d4b483]
+            to-transparent
+            "
+          />
+        </motion.div>
+
+        {/* Date */}
+        <motion.p
+          initial={{
+            opacity: 0,
+          }}
+          animate={{
+            opacity: 1,
+          }}
+          transition={{
+            delay: 1.2,
+          }}
+          className="
+          mt-6
+
+          text-white/90
+
+          text-xs
+          md:text-lg
+
+          tracking-[2px]
+          md:tracking-[6px]
+          "
+        >
+          12 JULY 2026
+        </motion.p>
+
+        {/* Button */}
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            delay: 1.5,
+          }}
+          className="flex justify-center"
+        >
+          <button
+            onClick={scrollToNext}
+            className="
+            mt-8
+
+            px-8
+            md:px-14
+
+            py-3
+            md:py-4
+
+            rounded-full
+
+            border
+            border-[#d4b483]
+
+            bg-white/5
+            backdrop-blur-xl
 
             text-[#d4b483]
 
-            mt-6
+            text-xs
+            md:text-sm
+
+            tracking-[2px]
+
+            transition-all
+            duration-500
+
+            hover:bg-[#d4b483]
+            hover:text-black
             "
           >
-            THE WEDDING OF
-          </motion.p>
+            OPEN INVITATION
+          </button>
+        </motion.div>
 
-          <motion.h1
-            initial={{
-              opacity: 0,
-              scale: 0.9,
-              filter: "blur(20px)",
-            }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              filter: "blur(0px)",
-            }}
-            transition={{
-              duration: 2,
-            }}
+        {/* Scroll Indicator */}
+        <motion.div
+          animate={{
+            y: [0, 10, 0],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+          }}
+          className="
+          flex
+          justify-center
+          mt-12
+          "
+        >
+          <div
             className="
-            text-center
+            w-7
+            h-12
 
-            mt-8
+            rounded-full
 
-            leading-[0.85]
+            border
+            border-white/20
 
-            text-[72px]
-            sm:text-[110px]
-            md:text-[180px]
-            xl:text-[220px]
+            flex
+            justify-center
 
-            tracking-[-0.03em]
-
-            text-white
-
-            drop-shadow-[0_15px_80px_rgba(0,0,0,0.9)]
-            "
-            style={{
-              fontFamily: "var(--font-cormorant)",
-            }}
-          >
-            Saifi
-            <br />
-            &
-            <br />
-            Nicky
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            className="
-            text-center
-
-            mt-6
-
-            uppercase
-
-            tracking-[0.4em]
-
-            text-white/70
-
-            text-sm
-            md:text-lg
+            pt-2
             "
           >
-            Forever Begins Here
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.2 }}
-            className="flex justify-center mt-8"
-          >
-            <div
+            <motion.div
+              animate={{
+                y: [0, 16, 0],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+              }}
               className="
-              h-px
-              w-40
+              w-1.5
+              h-1.5
 
-              bg-gradient-to-r
+              rounded-full
 
-              from-transparent
-              via-[#d4b483]
-              to-transparent
+              bg-[#d4b483]
               "
             />
-          </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.4 }}
-            className="
-            text-center
-
-            mt-8
-
-            text-base
-            md:text-xl
-
-            tracking-[6px]
-
-            text-white/85
-            "
-          >
-            12 JULY 2026
-          </motion.p>
-
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              delay: 1.7,
-            }}
-            className="
-            flex
-            justify-center
-            "
-          >
-            <button
-              onClick={scrollToNext}
-              className="
-              mt-10
-
-              px-10
-              md:px-14
-
-              py-4
-
-              rounded-full
-
-              border
-              border-[#d4b483]
-
-              text-[#d4b483]
-
-              tracking-[3px]
-
-              transition-all
-              duration-500
-
-              hover:bg-[#d4b483]
-              hover:text-black
-
-              hover:scale-105
-              "
-            >
-              OPEN INVITATION
-            </button>
-          </motion.div>
-
-          <motion.div
-            animate={{
-              y: [0, 10, 0],
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: 2,
-            }}
-            className="
-            flex
-            justify-center
-
-            mt-16
-            "
-          >
-            <div
-              className="
-              w-8
-              h-14
-
-              rounded-full
-
-              border
-
-              border-white/20
-
-              flex
-              justify-center
-
-              pt-2
-              "
-            >
-              <motion.div
-                animate={{
-                  y: [0, 18, 0],
-                }}
-                transition={{
-                  repeat: Infinity,
-                  duration: 2,
-                }}
-                className="
-                w-1.5
-                h-1.5
-
-                rounded-full
-
-                bg-[#d4b483]
-                "
-              />
-            </div>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

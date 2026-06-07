@@ -7,7 +7,7 @@ const stories = [
     year: "2014",
     image: "/images/story1.jpg",
     title: "Sebuah Pertemuan yang Tak Disadari",
-    desc: "Semua bermula di masa SMP. Saat itu kami hanyalah dua anak muda yang menjalani hari-hari sekolah seperti biasa. Kami saling mengenal tanpa pernah membayangkan bahwa suatu hari nanti takdir akan membawa kami kembali dalam sebuah perjalanan yang jauh lebih besar.",
+    desc: "Semua bermula di masa SMP. Saat itu kami hanyalah dua anak muda yang menjalani hari-hari sekolah seperti biasa. Kami saling mengenal tanpa pernah membayangkan bahwa suatu hari nanti takdir akan membawa kami kembali dalam perjalanan yang jauh lebih besar.",
   },
   {
     year: "2017",
@@ -19,7 +19,7 @@ const stories = [
     year: "2019",
     image: "/images/story3.jpg",
     title: "Dipisahkan Oleh Jarak",
-    desc: "Setelah lulus SMA, kehidupan membawa kami menuju arah yang berbeda. Kami melanjutkan pendidikan di tempat yang berjauhan. Hubungan jarak jauh mengajarkan banyak hal tentang kesabaran, pengorbanan, dan keikhlasan.",
+    desc: "Setelah lulus SMA, kehidupan membawa kami menuju arah yang berbeda. Hubungan jarak jauh mengajarkan banyak hal tentang kesabaran, pengorbanan, dan keikhlasan.",
   },
   {
     year: "2020",
@@ -54,60 +54,100 @@ export default function OurStory() {
       className="
       relative
       overflow-hidden
-      bg-[#0d0d0d]
+      bg-[#080808]
+      py-24
       "
     >
-  {/* Luxury Background */}
+      {/* Background */}
+
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,180,131,0.15),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,180,131,0.12),transparent_60%)]" />
+
+        <motion.div
+          animate={{
+            opacity: [0.2, 0.4, 0.2],
+            scale: [1, 1.15, 1],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+          }}
+          className="
+          absolute
+          left-1/2
+          top-1/2
+          -translate-x-1/2
+          -translate-y-1/2
+
+          w-[900px]
+          h-[900px]
+
+          rounded-full
+          bg-[#d4b483]/10
+
+          blur-[220px]
+          "
+        />
       </div>
 
-            {[...Array(30)].map((_, i) => (
+      {/* Floating Dust */}
+
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(40)].map((_, i) => (
           <motion.div
             key={i}
             animate={{
-              y: [0, -120, 0],
-              opacity: [0.15, 0.5, 0.15],
+              y: [0, -1200],
+              opacity: [0, 0.8, 0.8, 0],
             }}
             transition={{
-              duration: 6 + i,
+              duration: 12 + i,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: "linear",
+              delay: i * 0.4,
             }}
-            className="absolute rounded-full bg-[#d4b483]"
+            className="
+            absolute
+            rounded-full
+            bg-[#d4b483]
+            "
             style={{
-              width: Math.random() * 4 + 2,
-              height: Math.random() * 4 + 2,
-left: `${Math.random() * 100}%`,
-top: `${Math.random() * 100}%`,
+              width: `${Math.random() * 3 + 1}px`,
+              height: `${Math.random() * 3 + 1}px`,
+              left: `${Math.random() * 100}%`,
+              bottom: "-20px",
             }}
           />
         ))}
+      </div>
 
-   {/* Heading */}
-      <div className="relative z-20 py-40 text-center">
+      {/* Heading */}
+
+      <div className="relative z-20 text-center px-6 mb-20">
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           className="
           uppercase
-          tracking-[12px]
-          text-[#c9a86a]
-          text-sm
+          tracking-[8px]
+          text-[#d4b483]
+          text-[11px]
           "
         >
-          Our Journey
+          OUR JOURNEY
         </motion.p>
 
         <motion.h2
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
+          viewport={{ once: true }}
           className="
-          mt-6
+          mt-5
           text-white
-          text-6xl
-          md:text-[120px]
+          text-[58px]
+          leading-none
           "
           style={{
             fontFamily: "var(--font-cormorant)",
@@ -115,79 +155,135 @@ top: `${Math.random() * 100}%`,
         >
           Our Story
         </motion.h2>
+
+        <div
+          className="
+          w-24
+          h-px
+          mx-auto
+          mt-8
+          bg-gradient-to-r
+          from-transparent
+          via-[#d4b483]
+          to-transparent
+          "
+        />
       </div>
 
-      {/* Stories */}
-      <div className="relative z-20 space-y-40 pb-40">
-        {stories.map((story) => (
+      {/* Timeline */}
+
+      <div
+        className="
+        relative
+        z-20
+
+        max-w-md
+        mx-auto
+
+        px-5
+        "
+      >
+        {stories.map((story, index) => (
           <motion.div
             key={story.year}
-            initial={{ opacity: 0, y: 100 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-            className="max-w-7xl mx-auto px-6"
-          >
-            <div
-              className="
+            initial={{
+              opacity: 0,
+              y: 80,
+            }}
+            whileInView={{
+              opacity: 1,
+              y: 0,
+            }}
+            viewport={{
+              once: true,
+              amount: 0.2,
+            }}
+            transition={{
+              duration: 1,
+            }}
+            className={`
               relative
-              overflow-hidden
-              rounded-[50px]
-              border
-              border-white/10
-              bg-white/[0.04]
-              backdrop-blur-[30px]
-              shadow-[0_40px_150px_rgba(0,0,0,0.6)]
-              "
-            >
+              ${index !== stories.length - 1 ? "mb-16" : ""}
+            `}
+          >
+            {/* Connector */}
 
+            {index !== stories.length - 1 && (
               <div
                 className="
                 absolute
                 left-1/2
-                top-1/2
+                top-full
+
                 -translate-x-1/2
-                -translate-y-1/2
-                w-[700px]
-                h-[700px]
-                rounded-full
-                bg-[#d4b483]/15
-                blur-[180px]
+
+                w-px
+                h-16
+
+                bg-gradient-to-b
+                from-[#d4b483]
+                to-transparent
                 "
               />
+            )}
 
-              {/* Year Background */}
+            {/* Card */}
+
+            <div
+              className="
+              relative
+
+              overflow-hidden
+
+              rounded-[36px]
+
+              border
+              border-white/10
+
+              bg-white/[0.04]
+
+              backdrop-blur-3xl
+
+              shadow-[0_30px_120px_rgba(0,0,0,0.45)]
+              "
+            >
+              {/* Year */}
+
               <div
                 className="
                 absolute
-                inset-0
-                flex
-                items-center
-                justify-center
-                text-[180px]
-                md:text-[320px]
-                font-light
-                text-white/[0.04]
+                right-5
+                top-5
+
+                text-[80px]
+
+                text-white/[0.05]
+
+                leading-none
+
                 pointer-events-none
-                tracking-[-15px]
                 "
+                style={{
+                  fontFamily:
+                    "var(--font-cormorant)",
+                }}
               >
                 {story.year}
               </div>
 
               {/* Image */}
-              <div className="relative overflow-hidden h-[550px] md:h-[800px]">
+
+              <div className="relative h-[260px] overflow-hidden">
                 <motion.img
                   src={story.image}
                   alt={story.title}
                   animate={{
-                    scale: [1.15, 1],
+                    scale: [1.08, 1, 1.08],
                   }}
                   transition={{
                     duration: 15,
                     repeat: Infinity,
-                    repeatType: "reverse",
-                    ease: "linear",
+                    ease: "easeInOut",
                   }}
                   className="
                   w-full
@@ -196,150 +292,154 @@ top: `${Math.random() * 100}%`,
                   "
                 />
 
-                {/* Cinematic Overlay */}
                 <div
                   className="
                   absolute
                   inset-0
+
                   bg-gradient-to-t
-                  from-black
-                  via-black/30
-                  to-black/10
+                  from-black/80
+                  via-black/20
+                  to-transparent
                   "
                 />
 
-                {/* Film Grain */}
                 <div
                   className="
                   absolute
-                  inset-0
-                  opacity-[0.06]
-                  mix-blend-soft-light
-                  bg-[url('/grain.png')]
-                  "
-                />
+                  left-5
+                  bottom-5
 
-                {/* Content */}
-                <div
-                  className="
-                  absolute
-                  bottom-0
-                  left-0
-                  p-10
-                  md:p-20
-                  z-20
-                  max-w-4xl
+                  px-5
+                  py-2
+
+                  rounded-full
+
+                  bg-[#d4b483]
+
+                  text-black
+
+                  text-[11px]
+
+                  tracking-[4px]
+
+                  uppercase
                   "
                 >
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="
-                    inline-flex
-                    items-center
-                    px-6
-                    py-3
-                    rounded-full
-                    bg-gradient-to-r
-                    from-[#c9a86a]
-                    to-[#b08d57]
-                    text-white
-                    tracking-[5px]
-                    text-sm
-                    mb-8
-                    "
-                  >
-                    {story.year}
-                  </motion.div>
-
-                  <motion.h3
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="
-                    text-white
-                    text-5xl
-                    md:text-7xl
-                    leading-tight
-                    mb-8
-                    "
-                    style={{
-                      fontFamily: "var(--font-cormorant)",
-                    }}
-                  >
-                    {story.title}
-                  </motion.h3>
-
-                  <motion.p
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="
-                    text-white/80
-                    text-lg
-                    md:text-xl
-                    leading-9
-                    max-w-3xl
-                    "
-                  >
-                    {story.desc}
-                  </motion.p>
+                  {story.year}
                 </div>
+              </div>
+
+              {/* Content */}
+
+              <div className="p-7">
+                <h3
+                  className="
+                  text-white
+
+                  text-[38px]
+
+                  leading-tight
+                  "
+                  style={{
+                    fontFamily:
+                      "var(--font-cormorant)",
+                  }}
+                >
+                  {story.title}
+                </h3>
+
+                <p
+                  className="
+                  mt-4
+
+                  text-white/70
+
+                  leading-8
+
+                  text-[15px]
+                  "
+                >
+                  {story.desc}
+                </p>
               </div>
             </div>
           </motion.div>
         ))}
       </div>
 
-      {/* Grand Finale */}
-      <section
+      {/* Finale */}
+
+      <div
         className="
         relative
-        min-h-screen
-        flex
-        items-center
-        justify-center
+        z-20
+
+        text-center
+
+        mt-24
+
         px-6
         "
       >
-        <div
-          className="
-          absolute
-          w-[900px]
-          h-[900px]
-          rounded-full
-          bg-[#d4b483]/20
-          blur-[250px]
-          "
-        />
-
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 2 }}
-          className="relative text-center z-10"
+          initial={{
+            opacity: 0,
+            scale: 0.9,
+          }}
+          whileInView={{
+            opacity: 1,
+            scale: 1,
+          }}
+          viewport={{
+            once: true,
+          }}
+          transition={{
+            duration: 1.2,
+          }}
         >
+          <div
+            className="
+            w-32
+            h-px
+            mx-auto
+
+            bg-gradient-to-r
+            from-transparent
+            via-[#d4b483]
+            to-transparent
+            "
+          />
+
           <p
             className="
+            mt-8
+
             uppercase
-            tracking-[15px]
-            text-[#c9a86a]
-            mb-8
+
+            tracking-[10px]
+
+            text-[#d4b483]
+
+            text-[11px]
             "
           >
-            The Beginning
+            THE BEGINNING
           </p>
 
           <h2
             className="
+            mt-5
+
             text-white
-            text-7xl
-            md:text-[180px]
+
+            text-[90px]
+
             leading-none
             "
             style={{
-              fontFamily: "var(--font-cormorant)",
+              fontFamily:
+                "var(--font-cormorant)",
             }}
           >
             Forever
@@ -347,11 +447,14 @@ top: `${Math.random() * 100}%`,
 
           <p
             className="
-            mt-10
+            mt-6
+
             text-white/70
-            text-lg
-            md:text-2xl
-            max-w-3xl
+
+            leading-8
+
+            max-w-sm
+
             mx-auto
             "
           >
@@ -360,7 +463,7 @@ top: `${Math.random() * 100}%`,
             yang akan kami tulis bersama sepanjang hidup.
           </p>
         </motion.div>
-      </section>
+      </div>
     </section>
   );
 }
