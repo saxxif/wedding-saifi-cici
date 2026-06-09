@@ -10,15 +10,24 @@ export default function BrideGroom() {
       relative
       overflow-hidden
       bg-[#faf8f4]
-      py-24
+      pt-10
+      pb-24
       "
     >
-      {/* Background */}
+      {/* BACKGROUND */}
 
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[#faf8f4]" />
 
-        <div
+        <motion.div
+          animate={{
+            scale: [1, 1.08, 1],
+            opacity: [0.2, 0.35, 0.2],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+          }}
           className="
           absolute
           left-1/2
@@ -60,36 +69,69 @@ export default function BrideGroom() {
         </div>
       </div>
 
-      {/* Floating Dust */}
+      {/* FALLING LEAVES */}
 
-      {[...Array(12)].map((_, i) => (
+      {[...Array(18)].map((_, i) => (
         <motion.div
           key={i}
           animate={{
-            y: [0, -700],
+            y: ["-10vh", "120vh"],
+            x: [0, 40, -30, 20, 0],
+            rotate: [0, 120, 240, 360],
             opacity: [0, 1, 1, 0],
           }}
           transition={{
-            duration: 15 + i,
+            duration: 18 + i,
             repeat: Infinity,
             ease: "linear",
-            delay: i * 0.7,
+            delay: i * 0.8,
+          }}
+          className="
+          absolute
+          z-[2]
+
+          text-[#d4b483]/80
+
+          pointer-events-none
+          "
+          style={{
+            left: `${(i * 7) % 100}%`,
+            top: "-50px",
+            fontSize: `${18 + (i % 4) * 4}px`,
+          }}
+        >
+          ❦
+        </motion.div>
+      ))}
+
+      {/* FLOATING SPARKLES */}
+
+      {[...Array(10)].map((_, i) => (
+        <motion.div
+          key={`sparkle-${i}`}
+          animate={{
+            opacity: [0, 1, 0],
+            scale: [0.5, 1.4, 0.5],
+          }}
+          transition={{
+            duration: 3 + i,
+            repeat: Infinity,
+            delay: i * 0.8,
           }}
           className="
           absolute
 
-          h-[2px]
-          w-[2px]
+          text-[#e6c58f]
 
-          rounded-full
-
-          bg-[#d4b483]
+          text-lg
           "
           style={{
-            left: `${(i * 9) % 100}%`,
-            bottom: "-20px",
+            left: `${10 + i * 8}%`,
+            top: `${15 + (i % 5) * 12}%`,
           }}
-        />
+        >
+          ✦
+        </motion.div>
       ))}
 
       <div
@@ -97,13 +139,13 @@ export default function BrideGroom() {
         relative
         z-10
 
-        max-w-[620px]
+        max-w-[700px]
         mx-auto
 
         px-7
         "
       >
-        {/* Header */}
+        {/* HEADER */}
 
         <motion.div
           initial={{
@@ -124,16 +166,31 @@ export default function BrideGroom() {
           text-center
           "
         >
-          <div
+          <motion.div
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.4, 1, 0.4],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+            }}
             className="
             text-[#d4b483]
             text-xl
             "
           >
             ✦
-          </div>
+          </motion.div>
 
-          <h2
+          <motion.h2
+            animate={{
+              y: [0, -4, 0],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+            }}
             className="
             mt-2
 
@@ -149,7 +206,7 @@ export default function BrideGroom() {
             }}
           >
             Bride & Groom
-          </h2>
+          </motion.h2>
 
           <div
             className="
@@ -162,7 +219,7 @@ export default function BrideGroom() {
             mt-4
             "
           >
-            <div className="w-0 h-px bg-[#d4b483]" />
+            <div className="w-12 h-px bg-[#d4b483]" />
             <div className="text-[#d4b483]">✦</div>
             <div className="w-12 h-px bg-[#d4b483]" />
           </div>
@@ -206,24 +263,29 @@ export default function BrideGroom() {
             duration: 1,
           }}
           className="
-          mt-16
+          mt-8
 
           text-center
           "
         >
-          <p
+          <motion.p
+            animate={{
+              letterSpacing: ["0.3em", "0.45em", "0.3em"],
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+            }}
             className="
             uppercase
 
-            tracking-[0.3em]
-
-            text-[10px]
+            text-[15px]
 
             text-[#b08d57]
             "
           >
             ✦ THE BRIDE ✦
-          </p>
+          </motion.p>
 
           <div
             className="
@@ -259,12 +321,12 @@ export default function BrideGroom() {
               bg-white
               "
             >
-              <div className="overflow-hidden rounded-[18px]">
+              <div className="relative overflow-hidden rounded-[18px]">
                 <motion.img
                   src="/images/cici.jpg"
                   alt=""
                   animate={{
-                    scale: [1, 1.02, 1],
+                    scale: [1, 1.03, 1],
                   }}
                   transition={{
                     duration: 10,
@@ -272,17 +334,46 @@ export default function BrideGroom() {
                   }}
                   className="
                   w-full
-
                   aspect-[4/5]
-
                   object-cover
+                  "
+                />
+
+                <motion.div
+                  animate={{
+                    x: ["-200%", "300%"],
+                  }}
+                  transition={{
+                    duration: 6,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                  className="
+                  absolute
+                  inset-0
+
+                  w-24
+
+                  bg-gradient-to-r
+                  from-transparent
+                  via-white/30
+                  to-transparent
+
+                  blur-lg
                   "
                 />
               </div>
             </div>
           </div>
 
-          <h3
+          <motion.h3
+            animate={{
+              y: [0, 0, 0],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+            }}
             className="
             mt-5
 
@@ -295,11 +386,17 @@ export default function BrideGroom() {
             }}
           >
             Nicy Citra Auliya
-          </h3>
+          </motion.h3>
 
-          <div
+          <motion.div
+            animate={{
+              width: ["40px", "80px", "40px"],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+            }}
             className="
-            w-14
             h-px
 
             bg-[#d4b483]
@@ -359,9 +456,14 @@ export default function BrideGroom() {
           <motion.div
             animate={{
               rotate: [0, 360],
+              boxShadow: [
+                "0 0 0px rgba(212,180,131,0)",
+                "0 0 40px rgba(212,180,131,0.3)",
+                "0 0 0px rgba(212,180,131,0)",
+              ],
             }}
             transition={{
-              duration: 30,
+              duration: 20,
               repeat: Infinity,
               ease: "linear",
             }}
@@ -419,19 +521,24 @@ export default function BrideGroom() {
           text-center
           "
         >
-          <p
+          <motion.p
+            animate={{
+              letterSpacing: ["0.3em", "0.45em", "0.3em"],
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+            }}
             className="
             uppercase
 
-            tracking-[0.3em]
-
-            text-[10px]
+            text-[15px]
 
             text-[#b08d57]
             "
           >
             ✦ THE GROOM ✦
-          </p>
+          </motion.p>
 
           <div
             className="
@@ -467,12 +574,12 @@ export default function BrideGroom() {
               bg-white
               "
             >
-              <div className="overflow-hidden rounded-[18px]">
+              <div className="relative overflow-hidden rounded-[18px]">
                 <motion.img
                   src="/images/saifi.jpg"
                   alt=""
                   animate={{
-                    scale: [1, 1.02, 1],
+                    scale: [1, 1.03, 1],
                   }}
                   transition={{
                     duration: 10,
@@ -480,17 +587,46 @@ export default function BrideGroom() {
                   }}
                   className="
                   w-full
-
                   aspect-[4/5]
-
                   object-cover
+                  "
+                />
+
+                <motion.div
+                  animate={{
+                    x: ["-200%", "300%"],
+                  }}
+                  transition={{
+                    duration: 6,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                  className="
+                  absolute
+                  inset-0
+
+                  w-24
+
+                  bg-gradient-to-r
+                  from-transparent
+                  via-white/30
+                  to-transparent
+
+                  blur-lg
                   "
                 />
               </div>
             </div>
           </div>
 
-          <h3
+          <motion.h3
+            animate={{
+              y: [0, -3, 0],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+            }}
             className="
             mt-5
 
@@ -503,11 +639,17 @@ export default function BrideGroom() {
             }}
           >
             Saifi Hidayatullah
-          </h3>
+          </motion.h3>
 
-          <div
+          <motion.div
+            animate={{
+              width: ["40px", "80px", "40px"],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+            }}
             className="
-            w-14
             h-px
 
             bg-[#d4b483]
@@ -537,7 +679,7 @@ export default function BrideGroom() {
           </p>
         </motion.div>
 
-        {/* Bottom Ornament */}
+        {/* BOTTOM */}
 
         <div
           className="
@@ -552,17 +694,48 @@ export default function BrideGroom() {
         >
           <div className="flex-1 h-px bg-[#d4b483]" />
 
-          <div
-            className="
-            text-[40px]
+          <div className="relative">
+            <motion.div
+              animate={{
+                rotate: [0, 360],
+              }}
+              transition={{
+                duration: 25,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+              className="
+              absolute
 
-            text-[#c8a970]
-            "
-            style={{
-              fontFamily: "var(--font-cormorant)",
-            }}
-          >
-            NS
+              left-1/2
+              top-1/2
+
+              -translate-x-1/2
+              -translate-y-1/2
+
+              h-[90px]
+              w-[90px]
+
+              rounded-full
+
+              border
+
+              border-[#d4b483]/20
+              "
+            />
+
+            <div
+              className="
+              text-[40px]
+
+              text-[#c8a970]
+              "
+              style={{
+                fontFamily: "var(--font-cormorant)",
+              }}
+            >
+              NS
+            </div>
           </div>
 
           <div className="flex-1 h-px bg-[#d4b483]" />

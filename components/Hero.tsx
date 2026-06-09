@@ -7,11 +7,29 @@ export default function Hero() {
   const [heroReady, setHeroReady] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setHeroReady(true);
-    }, 300);
+    let timer: number | undefined;
 
-    return () => clearTimeout(timer);
+    const handleOpenInvitation = () => {
+      timer = window.setTimeout(() => {
+        setHeroReady(true);
+      }, 200);
+    };
+
+    window.addEventListener(
+      "open-invitation",
+      handleOpenInvitation
+    );
+
+    return () => {
+      window.removeEventListener(
+        "open-invitation",
+        handleOpenInvitation
+      );
+
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
   }, []);
 
   const scrollToNext = () => {
@@ -343,7 +361,7 @@ export default function Hero() {
       <div
         className="
         absolute
-        top-[125px]
+        top-[160px]
         left-1/2
         -translate-x-1/2
         z-30
@@ -425,7 +443,7 @@ export default function Hero() {
             delay: 1.2,
             duration: 1,
           }}
-          className="text-[42px] leading-none"
+          className="text-[70px] leading-none"
           style={{
             fontFamily: "var(--font-cormorant)",
             background:
@@ -639,11 +657,11 @@ export default function Hero() {
         }}
         className="
         absolute
-        bottom-0
+        bottom-14
         left-1/2
         -translate-x-1/2
         z-20
-        w-[92%]
+        w-[100%]
         max-w-[720px]
         "
       >
@@ -651,7 +669,7 @@ export default function Hero() {
           src="/images/image.png"
           alt="Wedding Couple"
           animate={{
-            y: [100, 90, 100],
+            y: [50, 30, 50],
           }}
           transition={{
             duration: 6,
@@ -686,7 +704,7 @@ export default function Hero() {
         }}
         className="
         absolute
-        bottom-5
+        bottom-0
         left-1/2
         -translate-x-1/2
         z-30
