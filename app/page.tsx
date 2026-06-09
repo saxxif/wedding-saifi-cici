@@ -1,4 +1,5 @@
 "use client";
+
 import MusicPlayer from "@/components/MusicPlayer";
 import Hero from "@/components/Hero";
 import BrideGroom from "@/components/BrideGroom";
@@ -9,41 +10,43 @@ import Gallery from "@/components/Gallery";
 import LoveQuote from "@/components/LoveQuote";
 import WeddingGift from "@/components/WeddingGift";
 
-
 export default function Home() {
   return (
     <main
       className="
-      relative
-      overflow-x-hidden
+      min-h-[100svh]
       bg-[#faf8f4]
+      flex
+      justify-center
+      overflow-x-hidden
       "
     >
-      <MusicPlayer />
-      {/* Hero */}
-      <Hero />
+      <div
+        className="
+        relative
+        w-full
+        max-w-[430px]
+        bg-[#faf8f4]
+        overflow-hidden
+        shadow-[0_0_50px_rgba(0,0,0,0.08)]
+        "
+      >
+        <MusicPlayer />
 
-      {/* Bride & Groom */}
-      <BrideGroom />
+        <Hero />
 
-      {/* Countdown */}
-      <Countdown />
+        <BrideGroom />
 
-      {/* Love Journey */}
-      <OurStory />
+        <Countdown />
 
-      {/* Wedding Event */}
-      <EventDetail />
+        <OurStory />
 
-      {/* Gallery */}
-      <Gallery />
+        <EventDetail />
 
-      {/* Wedding Gift */}
-      <WeddingGift />
+        <Gallery />
 
-     
-
-
+        <WeddingGift />
+      </div>
     </main>
   );
 }
