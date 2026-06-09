@@ -1,18 +1,27 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
+
+const fadeScale = {
+  opacity: [0.2, 0.45, 0.2],
+  scale: [1, 1.15, 1],
+};
+
+const goldTextStyle = {
+  fontFamily: "var(--font-cormorant)",
+  background:
+    "linear-gradient(180deg,#f5e2bb,#c89b56,#9b6a2e)",
+  WebkitBackgroundClip: "text",
+  color: "transparent",
+};
 
 export default function Hero() {
   const [heroReady, setHeroReady] = useState(false);
 
   useEffect(() => {
-    let timer: number | undefined;
-
     const handleOpenInvitation = () => {
-      timer = window.setTimeout(() => {
-        setHeroReady(true);
-      }, 200);
+      setHeroReady(true);
     };
 
     window.addEventListener(
@@ -25,20 +34,27 @@ export default function Hero() {
         "open-invitation",
         handleOpenInvitation
       );
-
-      if (timer) {
-        clearTimeout(timer);
-      }
     };
   }, []);
 
-  const scrollToNext = () => {
+  const scrollToNext = useCallback(() => {
     document
       .getElementById("bride-groom")
       ?.scrollIntoView({
         behavior: "smooth",
       });
-  };
+  }, []);
+
+  const goldDust = useMemo(
+    () =>
+      Array.from({ length: 18 }, (_, i) => ({
+        id: i,
+        left: `${(i * 7) % 100}%`,
+        duration: 15 + i,
+        delay: i * 0.5,
+      })),
+    []
+  );
 
   return (
     <section
@@ -49,8 +65,6 @@ export default function Hero() {
       bg-[#f8f4ed]
       "
     >
-      {/* BACKGROUND */}
-
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[#f8f4ed]" />
 
@@ -65,7 +79,7 @@ export default function Hero() {
                   scale: 1,
                   opacity: 1,
                 }
-              : {}
+              : undefined
           }
           transition={{
             duration: 2,
@@ -95,7 +109,7 @@ export default function Hero() {
                   x: 0,
                   opacity: 1,
                 }
-              : {}
+              : undefined
           }
           transition={{
             duration: 2,
@@ -112,13 +126,11 @@ export default function Hero() {
         />
 
         <motion.div
-          animate={{
-            opacity: [0.2, 0.45, 0.2],
-            scale: [1, 1.15, 1],
-          }}
+          animate={fadeScale}
           transition={{
             duration: 10,
             repeat: Infinity,
+            repeatType: "loop",
           }}
           className="
           absolute
@@ -129,12 +141,10 @@ export default function Hero() {
           w-[500px]
           rounded-full
           bg-[#d6b27c]/25
-          blur-[160px]
+          blur-[60px]
           "
         />
       </div>
-
-      {/* FLOWERS */}
 
       <motion.img
         src="/images/flower.png"
@@ -153,6 +163,7 @@ export default function Hero() {
         transition={{
           duration: 8,
           repeat: Infinity,
+          repeatType: "mirror",
         }}
         className="
         absolute
@@ -160,6 +171,7 @@ export default function Hero() {
         top-[-30px]
         w-[220px]
         blur-[2px]
+        will-change-transform
         "
       />
 
@@ -180,6 +192,7 @@ export default function Hero() {
         transition={{
           duration: 10,
           repeat: Infinity,
+          repeatType: "mirror",
         }}
         className="
         absolute
@@ -187,10 +200,9 @@ export default function Hero() {
         bottom-[-20px]
         w-[260px]
         blur-[4px]
+        will-change-transform
         "
       />
-
-      {/* GOLD SPARKLES */}
 
       <motion.div
         animate={{
@@ -232,21 +244,19 @@ export default function Hero() {
         ✦
       </motion.div>
 
-      {/* GOLD DUST */}
-
-      {[...Array(18)].map((_, i) => (
+      {goldDust.map((dust) => (
         <motion.div
-          key={i}
+          key={dust.id}
           animate={{
             y: [0, -800],
             opacity: [0, 1, 1, 0],
             x: [0, 20, -10],
           }}
           transition={{
-            duration: 15 + i,
+            duration: dust.duration,
             repeat: Infinity,
             ease: "linear",
-            delay: i * 0.5,
+            delay: dust.delay,
           }}
           className="
           absolute
@@ -255,15 +265,14 @@ export default function Hero() {
           rounded-full
           bg-[#d4b483]
           shadow-[0_0_15px_rgba(212,180,131,0.8)]
+          will-change-transform
           "
           style={{
-            left: `${(i * 7) % 100}%`,
+            left: dust.left,
             bottom: "-50px",
           }}
         />
       ))}
-
-      {/* MONOGRAM */}
 
       <motion.div
         initial={{
@@ -280,7 +289,7 @@ export default function Hero() {
                 y: 0,
                 rotate: 0,
               }
-            : {}
+            : undefined
         }
         transition={{
           duration: 1.5,
@@ -321,8 +330,6 @@ export default function Hero() {
         </p>
       </motion.div>
 
-      {/* DIVIDER */}
-
       <motion.div
         initial={{
           opacity: 0,
@@ -334,7 +341,7 @@ export default function Hero() {
                 opacity: 1,
                 scaleX: 1,
               }
-            : {}
+            : undefined
         }
         transition={{
           delay: 0.4,
@@ -355,8 +362,6 @@ export default function Hero() {
         <div className="text-[#c89b56]">✦</div>
         <div className="h-px w-16 bg-[#c89b56]" />
       </motion.div>
-
-      {/* NAMES */}
 
       <div
         className="
@@ -382,7 +387,7 @@ export default function Hero() {
                     y: 0,
                     filter: "blur(0px)",
                   }
-                : {}
+                : undefined
             }
             transition={{
               delay: 0.8,
@@ -393,13 +398,7 @@ export default function Hero() {
             leading-[0.82]
             tracking-[-0.05em]
             "
-            style={{
-              fontFamily: "var(--font-cormorant)",
-              background:
-                "linear-gradient(180deg,#f5e2bb,#c89b56,#9b6a2e)",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
+            style={goldTextStyle}
           >
             NICKY
           </motion.h1>
@@ -422,6 +421,7 @@ export default function Hero() {
             via-white/40
             to-transparent
             blur-md
+            will-change-transform
             "
           />
         </div>
@@ -437,20 +437,14 @@ export default function Hero() {
                   opacity: 1,
                   scale: 1,
                 }
-              : {}
+              : undefined
           }
           transition={{
             delay: 1.2,
             duration: 1,
           }}
           className="text-[70px] leading-none"
-          style={{
-            fontFamily: "var(--font-cormorant)",
-            background:
-              "linear-gradient(180deg,#f5e2bb,#c89b56,#9b6a2e)",
-            WebkitBackgroundClip: "text",
-            color: "transparent",
-          }}
+          style={goldTextStyle}
         >
           &
         </motion.div>
@@ -469,7 +463,7 @@ export default function Hero() {
                     y: 0,
                     filter: "blur(0px)",
                   }
-                : {}
+                : undefined
             }
             transition={{
               delay: 1.5,
@@ -480,13 +474,7 @@ export default function Hero() {
             leading-[0.82]
             tracking-[-0.05em]
             "
-            style={{
-              fontFamily: "var(--font-cormorant)",
-              background:
-                "linear-gradient(180deg,#f5e2bb,#c89b56,#9b6a2e)",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
+            style={goldTextStyle}
           >
             SAIFI
           </motion.h1>
@@ -509,6 +497,7 @@ export default function Hero() {
             via-white/40
             to-transparent
             blur-md
+            will-change-transform
             "
           />
         </div>
@@ -522,7 +511,7 @@ export default function Hero() {
               ? {
                   opacity: 1,
                 }
-              : {}
+              : undefined
           }
           transition={{
             delay: 2.2,
@@ -539,8 +528,6 @@ export default function Hero() {
           TWO SOULS, ONE DESTINY
         </motion.p>
       </div>
-
-      {/* LIGHT RINGS */}
 
       <motion.div
         initial={{
@@ -577,6 +564,7 @@ export default function Hero() {
         rounded-full
         border
         border-[#d4b483]/30
+        will-change-transform
         "
       />
 
@@ -599,10 +587,9 @@ export default function Hero() {
         rounded-full
         border-t-2
         border-[#f7dca5]
+        will-change-transform
         "
       />
-
-      {/* GOLD SWEEP */}
 
       <motion.div
         initial={{
@@ -613,7 +600,7 @@ export default function Hero() {
             ? {
                 x: "350%",
               }
-            : {}
+            : undefined
         }
         transition={{
           delay: 2,
@@ -630,10 +617,9 @@ export default function Hero() {
         to-transparent
         blur-3xl
         z-40
+        will-change-transform
         "
       />
-
-      {/* COUPLE */}
 
       <motion.div
         initial={{
@@ -648,7 +634,7 @@ export default function Hero() {
                 y: 0,
                 scale: 1,
               }
-            : {}
+            : undefined
         }
         transition={{
           delay: 1.8,
@@ -674,15 +660,17 @@ export default function Hero() {
           transition={{
             duration: 6,
             repeat: Infinity,
+            repeatType: "mirror",
           }}
           className="
           w-full
           object-contain
+          will-change-transform
           "
+          loading="eager"
+          decoding="async"
         />
       </motion.div>
-
-      {/* SCROLL */}
 
       <motion.button
         onClick={scrollToNext}
@@ -696,7 +684,7 @@ export default function Hero() {
                 opacity: 1,
                 y: 0,
               }
-            : {}
+            : undefined
         }
         transition={{
           delay: 3.8,
@@ -734,6 +722,7 @@ export default function Hero() {
           mt-1
           text-xl
           text-[#9a7b4d]
+          will-change-transform
           "
         >
           ˅

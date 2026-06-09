@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useMemo, useState } from "react";
 import GoldLeaves from "@/components/GoldLeaves";
 
 const events = [
@@ -10,7 +11,7 @@ const events = [
     image: "/images/akad.jpg",
     date: "12 Juli 2026",
     time: "07.00 WIB",
-    place: "Masjid Agung Bangkalan,",
+    place: "Masjid Agung Bangkalan",
   },
   {
     type: "Wedding Reception",
@@ -23,6 +24,20 @@ const events = [
 ];
 
 export default function EventDetail() {
+  const [activeCard, setActiveCard] = useState<number | null>(0);
+
+  const weddingDate = new Date("2026-07-12T07:00:00");
+
+  const daysLeft = useMemo(() => {
+    return Math.max(
+      0,
+      Math.floor(
+        (weddingDate.getTime() - Date.now()) /
+          (1000 * 60 * 60 * 24)
+      )
+    );
+  }, []);
+
   return (
     <section
       id="event"
@@ -35,8 +50,6 @@ export default function EventDetail() {
     >
       <GoldLeaves />
 
-      {/* Background */}
-
       <div className="absolute inset-0">
         <div
           className="
@@ -48,11 +61,11 @@ export default function EventDetail() {
 
         <motion.div
           animate={{
-            scale: [1, 1.12, 1],
-            opacity: [0.2, 0.35, 0.2],
+            scale: [1, 1.08, 1],
+            opacity: [0.18, 0.3, 0.18],
           }}
           transition={{
-            duration: 12,
+            duration: 14,
             repeat: Infinity,
           }}
           className="
@@ -61,14 +74,10 @@ export default function EventDetail() {
           top-1/2
           -translate-x-1/2
           -translate-y-1/2
-
           w-[900px]
           h-[900px]
-
           rounded-full
-
           bg-[#d4af37]/10
-
           blur-[180px]
           "
         />
@@ -77,18 +86,13 @@ export default function EventDetail() {
           className="
           absolute
           inset-0
-
           flex
           items-center
           justify-center
-
           text-[180px]
           md:text-[400px]
-
           text-[#d4af37]/[0.03]
-
           pointer-events-none
-
           leading-none
           "
           style={{
@@ -99,20 +103,18 @@ export default function EventDetail() {
         </div>
       </div>
 
-      {/* Floating Dust */}
-
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(35)].map((_, i) => (
+        {Array.from({ length: 12 }).map((_, i) => (
           <motion.div
             key={i}
             animate={{
-              y: [0, -80, 0],
-              opacity: [0.1, 0.7, 0.1],
+              y: [0, -50, 0],
+              opacity: [0.15, 0.5, 0.15],
             }}
             transition={{
-              duration: 5 + (i % 5),
+              duration: 6 + (i % 4),
               repeat: Infinity,
-              delay: i * 0.15,
+              delay: i * 0.25,
             }}
             className="
             absolute
@@ -120,8 +122,8 @@ export default function EventDetail() {
             bg-[#d4af37]
             "
             style={{
-              width: `${2 + (i % 4)}px`,
-              height: `${2 + (i % 4)}px`,
+              width: `${2 + (i % 2)}px`,
+              height: `${2 + (i % 2)}px`,
               left: `${(i * 17) % 100}%`,
               top: `${(i * 29) % 100}%`,
             }}
@@ -133,15 +135,11 @@ export default function EventDetail() {
         className="
         relative
         z-20
-
         max-w-md
         mx-auto
-
         px-5
         "
       >
-        {/* Heading */}
-
         <motion.div
           initial={{
             opacity: 0,
@@ -159,11 +157,8 @@ export default function EventDetail() {
           <p
             className="
             uppercase
-
             tracking-[8px]
-
             text-[#b08d57]
-
             text-[11px]
             "
           >
@@ -173,11 +168,8 @@ export default function EventDetail() {
           <h2
             className="
             mt-5
-
             text-[58px]
-
             leading-none
-
             text-[#1b1b1b]
             "
             style={{
@@ -192,12 +184,10 @@ export default function EventDetail() {
             className="
             w-24
             h-px
-
             bg-gradient-to-r
             from-transparent
             via-[#d4af37]
             to-transparent
-
             mx-auto
             mt-8
             "
@@ -206,11 +196,8 @@ export default function EventDetail() {
           <p
             className="
             mt-8
-
             text-gray-600
-
             leading-8
-
             text-[15px]
             "
           >
@@ -221,7 +208,68 @@ export default function EventDetail() {
           </p>
         </motion.div>
 
-        {/* Date */}
+        <motion.div
+          initial={{
+            opacity: 0,
+            scale: 0.9,
+          }}
+          whileInView={{
+            opacity: 1,
+            scale: 1,
+          }}
+          viewport={{
+            once: true,
+          }}
+          className="
+          my-12
+          text-center
+          "
+        >
+          <div
+            className="
+            inline-flex
+            flex-col
+            items-center
+            px-8
+            py-5
+            rounded-[30px]
+            bg-white/80
+            backdrop-blur-xl
+            border
+            border-[#d4af37]/10
+            shadow-[0_20px_60px_rgba(0,0,0,0.06)]
+            "
+          >
+            <p
+              className="
+              uppercase
+              tracking-[4px]
+              text-[#b08d57]
+              text-[10px]
+              "
+            >
+              Countdown
+            </p>
+
+            <span
+              className="
+              text-[58px]
+              leading-none
+              text-[#b08d57]
+              "
+              style={{
+                fontFamily:
+                  "var(--font-cormorant)",
+              }}
+            >
+              {daysLeft}
+            </span>
+
+            <p className="text-sm text-gray-500">
+              Hari Menuju Pernikahan
+            </p>
+          </div>
+        </motion.div>
 
         <motion.div
           initial={{
@@ -237,18 +285,14 @@ export default function EventDetail() {
           }}
           className="
           text-center
-
           my-16
           "
         >
           <p
             className="
             uppercase
-
             tracking-[6px]
-
             text-[#b08d57]
-
             text-[11px]
             "
           >
@@ -258,9 +302,7 @@ export default function EventDetail() {
           <h3
             className="
             text-[120px]
-
             leading-none
-
             text-[#b08d57]
             "
             style={{
@@ -274,9 +316,7 @@ export default function EventDetail() {
           <p
             className="
             text-gray-500
-
             text-xl
-
             tracking-[3px]
             "
           >
@@ -284,52 +324,61 @@ export default function EventDetail() {
           </p>
         </motion.div>
 
-        {/* Event Cards */}
-
         <div className="space-y-10">
           {events.map((event, index) => (
             <motion.div
               key={event.title}
+              layout
+              onClick={() =>
+                setActiveCard(
+                  activeCard === index
+                    ? null
+                    : index
+                )
+              }
               initial={{
                 opacity: 0,
-                y: 80,
+                y: 60,
               }}
               whileInView={{
                 opacity: 1,
                 y: 0,
               }}
+              whileHover={{
+                y: -8,
+              }}
               viewport={{
                 once: true,
               }}
               transition={{
-                duration: 1,
-                delay: index * 0.2,
+                duration: 0.6,
               }}
-              className="
-              overflow-hidden
-
-              rounded-[36px]
-
-              bg-white/80
-
-              backdrop-blur-3xl
-
-              border
-              border-[#d4af37]/10
-
-              shadow-[0_25px_90px_rgba(0,0,0,0.08)]
-              "
+              className={`
+                overflow-hidden
+                rounded-[36px]
+                bg-white/80
+                backdrop-blur-xl
+                border
+                cursor-pointer
+                shadow-[0_25px_90px_rgba(0,0,0,0.08)]
+                transition-all
+                ${
+                  activeCard === index
+                    ? "border-[#d4af37] ring-2 ring-[#d4af37]/20"
+                    : "border-[#d4af37]/10"
+                }
+              `}
             >
               <div className="relative h-[250px] overflow-hidden">
                 <motion.img
-                  whileHover={{
-                    scale: 1.08,
-                  }}
-                  transition={{
-                    duration: 0.8,
-                  }}
                   src={event.image}
                   alt={event.title}
+                  whileHover={{
+                    scale: 1.06,
+                  }}
+                  transition={{
+                    duration: 0.6,
+                  }}
                   className="
                   w-full
                   h-full
@@ -337,11 +386,34 @@ export default function EventDetail() {
                   "
                 />
 
+                <motion.div
+                  animate={{
+                    x: [
+                      "-200%",
+                      "300%",
+                    ],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    repeatDelay: 8,
+                    ease: "linear",
+                  }}
+                  className="
+                  absolute
+                  inset-0
+                  w-24
+                  bg-gradient-to-r
+                  from-transparent
+                  via-white/30
+                  to-transparent
+                  "
+                />
+
                 <div
                   className="
                   absolute
                   inset-0
-
                   bg-gradient-to-t
                   from-black/60
                   to-transparent
@@ -353,20 +425,13 @@ export default function EventDetail() {
                   absolute
                   left-5
                   bottom-5
-
                   px-4
                   py-2
-
                   rounded-full
-
                   bg-white/90
-
                   text-[#b08d57]
-
                   uppercase
-
                   tracking-[3px]
-
                   text-[10px]
                   "
                 >
@@ -378,9 +443,7 @@ export default function EventDetail() {
                 <h3
                   className="
                   text-[52px]
-
                   leading-none
-
                   text-[#1b1b1b]
                   "
                   style={{
@@ -395,14 +458,11 @@ export default function EventDetail() {
                   className="
                   w-20
                   h-px
-
                   bg-gradient-to-r
                   from-transparent
                   via-[#d4af37]
                   to-transparent
-
                   mx-auto
-
                   my-6
                   "
                 />
@@ -410,9 +470,7 @@ export default function EventDetail() {
                 <div
                   className="
                   space-y-3
-
                   text-gray-600
-
                   text-[15px]
                   "
                 >
@@ -420,12 +478,54 @@ export default function EventDetail() {
                   <p>{event.time}</p>
                   <p>{event.place}</p>
                 </div>
+
+                <AnimatePresence>
+                  {activeCard === index && (
+                    <motion.div
+                      initial={{
+                        opacity: 0,
+                        height: 0,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        height: "auto",
+                      }}
+                      exit={{
+                        opacity: 0,
+                        height: 0,
+                      }}
+                      className="
+                      overflow-hidden
+                      "
+                    >
+                      <div
+                        className="
+                        mt-6
+                        pt-6
+                        border-t
+                        border-[#d4af37]/10
+                        "
+                      >
+                        <p
+                          className="
+                          text-sm
+                          text-gray-500
+                          leading-7
+                          "
+                        >
+                          Klik tombol lokasi di
+                          bawah untuk membuka
+                          Google Maps dan melihat
+                          rute menuju lokasi acara.
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </motion.div>
           ))}
         </div>
-
-        {/* Buttons */}
 
         <motion.div
           initial={{
@@ -442,9 +542,7 @@ export default function EventDetail() {
           className="
           flex
           flex-col
-
           gap-4
-
           mt-14
           "
         >
@@ -453,48 +551,37 @@ export default function EventDetail() {
             target="_blank"
             className="
             text-center
-
             py-4
-
             rounded-full
-
             bg-[#b08d57]
-
             text-white
-
             uppercase
-
             tracking-[3px]
-
             shadow-[0_20px_60px_rgba(176,141,87,0.35)]
-
             transition-all
-            duration-500
-
-            hover:scale-[1.03]
+            duration-300
+            hover:scale-[1.02]
             "
           >
             VIEW VENUE
           </a>
 
           <button
+            onClick={() =>
+              navigator.clipboard.writeText(
+                "12 Juli 2026"
+              )
+            }
             className="
             py-4
-
             rounded-full
-
             border
             border-[#b08d57]
-
             text-[#b08d57]
-
             uppercase
-
             tracking-[3px]
-
             transition-all
-            duration-500
-
+            duration-300
             hover:bg-[#b08d57]
             hover:text-white
             "

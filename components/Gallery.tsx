@@ -1,6 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
 
 const photos = [
   "/images/gallery1.jpg",
@@ -9,9 +11,46 @@ const photos = [
   "/images/gallery4.jpg",
   "/images/gallery5.jpg",
   "/images/gallery6.jpg",
+  "/images/gallery7.jpg",
+  "/images/gallery8.jpg",
+  "/images/gallery9.jpg",
+  "/images/gallery10.jpg",
+  "/images/gallery11.jpg",
+  "/images/gallery12.jpg",
+  "/images/gallery13.jpg",
+  "/images/gallery14.jpg",
+  "/images/gallery15.jpg",
+  "/images/gallery16.jpg",
 ];
 
 export default function Gallery() {
+  const [page, setPage] = useState(0);
+
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 10 }, (_, i) => ({
+        id: i,
+        left: `${(i * 11) % 100}%`,
+        top: `${(i * 23) % 100}%`,
+      })),
+    []
+  );
+
+  const totalPages = Math.ceil(photos.length / 4);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPage((prev) => (prev + 1) % totalPages);
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [totalPages]);
+
+  const visiblePhotos = photos.slice(
+    page * 4,
+    page * 4 + 4
+  );
+
   return (
     <section
       id="gallery"
@@ -22,8 +61,6 @@ export default function Gallery() {
       py-28
       "
     >
-      {/* Background */}
-
       <div className="absolute inset-0">
         <div
           className="
@@ -33,30 +70,18 @@ export default function Gallery() {
           "
         />
 
-        <motion.div
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.2, 0.4, 0.2],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-          }}
+        <div
           className="
           absolute
           left-1/2
           top-1/2
           -translate-x-1/2
           -translate-y-1/2
-
-          w-[900px]
-          h-[900px]
-
+          w-[700px]
+          h-[700px]
           rounded-full
-
           bg-[#d4af37]/10
-
-          blur-[200px]
+          blur-[80px]
           "
         />
 
@@ -64,18 +89,13 @@ export default function Gallery() {
           className="
           absolute
           inset-0
-
           flex
           items-center
           justify-center
-
           text-[180px]
           md:text-[380px]
-
           text-[#d4af37]/[0.03]
-
           pointer-events-none
-
           leading-none
           "
           style={{
@@ -86,20 +106,18 @@ export default function Gallery() {
         </div>
       </div>
 
-      {/* Floating Dust */}
-
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(35)].map((_, i) => (
+        {particles.map((item) => (
           <motion.div
-            key={i}
+            key={item.id}
             animate={{
-              y: [0, -80, 0],
-              opacity: [0.1, 0.8, 0.1],
+              y: [0, -40, 0],
+              opacity: [0.1, 0.5, 0.1],
             }}
             transition={{
-              duration: 5 + (i % 6),
+              duration: 6 + (item.id % 4),
               repeat: Infinity,
-              delay: i * 0.2,
+              delay: item.id * 0.3,
             }}
             className="
             absolute
@@ -107,10 +125,10 @@ export default function Gallery() {
             bg-[#d4af37]
             "
             style={{
-              width: `${2 + (i % 3)}px`,
-              height: `${2 + (i % 3)}px`,
-              left: `${(i * 11) % 100}%`,
-              top: `${(i * 23) % 100}%`,
+              width: `${2 + (item.id % 2)}px`,
+              height: `${2 + (item.id % 2)}px`,
+              left: item.left,
+              top: item.top,
             }}
           />
         ))}
@@ -120,15 +138,11 @@ export default function Gallery() {
         className="
         relative
         z-20
-
         max-w-md
         mx-auto
-
         px-5
         "
       >
-        {/* Heading */}
-
         <motion.div
           initial={{
             opacity: 0,
@@ -146,11 +160,8 @@ export default function Gallery() {
           <p
             className="
             uppercase
-
             tracking-[8px]
-
             text-[#b08d57]
-
             text-[11px]
             "
           >
@@ -160,16 +171,12 @@ export default function Gallery() {
           <h2
             className="
             mt-5
-
             text-[58px]
-
             leading-none
-
             text-[#1b1b1b]
             "
             style={{
-              fontFamily:
-                "var(--font-cormorant)",
+              fontFamily: "var(--font-cormorant)",
             }}
           >
             Our Gallery
@@ -179,10 +186,8 @@ export default function Gallery() {
             className="
             w-24
             h-px
-
             mx-auto
             mt-8
-
             bg-gradient-to-r
             from-transparent
             via-[#d4af37]
@@ -193,11 +198,8 @@ export default function Gallery() {
           <p
             className="
             mt-8
-
             text-gray-600
-
             text-[15px]
-
             leading-8
             "
           >
@@ -207,154 +209,109 @@ export default function Gallery() {
           </p>
         </motion.div>
 
-        {/* Featured Photo */}
-
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 60,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-          }}
-          transition={{
-            duration: 1,
-          }}
-          className="
-          mt-14
-
-          overflow-hidden
-
-          rounded-[38px]
-
-          bg-white
-
-          border
-          border-[#d4af37]/10
-
-          shadow-[0_30px_90px_rgba(0,0,0,0.08)]
-          "
-        >
-          <div className="relative h-[450px] overflow-hidden">
-            <motion.img
-              animate={{
-                scale: [1.05, 1.12, 1.05],
-              }}
-              transition={{
-                duration: 15,
-                repeat: Infinity,
-              }}
-              src={photos[0]}
-              alt="Gallery"
-              className="
-              w-full
-              h-full
-              object-cover
-              "
-            />
-
-            <div
-              className="
-              absolute
-              inset-0
-
-              bg-gradient-to-t
-              from-black/50
-              to-transparent
-              "
-            />
-
-            <div
-              className="
-              absolute
-              bottom-6
-              left-6
-
-              px-5
-              py-2
-
-              rounded-full
-
-              bg-white/90
-
-              text-[#b08d57]
-
-              text-[10px]
-
-              tracking-[4px]
-
-              uppercase
-              "
-            >
-              Featured Moment
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Gallery Grid */}
-
-        <div className="grid grid-cols-2 gap-4 mt-5">
-          {photos.slice(1).map((photo, index) => (
+        <div className="mt-14 relative min-h-[520px]">
+          <AnimatePresence mode="wait">
             <motion.div
-              key={index}
+              key={page}
               initial={{
                 opacity: 0,
-                y: 50,
+                y: 40,
               }}
-              whileInView={{
+              animate={{
                 opacity: 1,
                 y: 0,
               }}
-              viewport={{
-                once: true,
+              exit={{
+                opacity: 0,
+                y: -40,
               }}
               transition={{
                 duration: 0.8,
-                delay: index * 0.1,
-              }}
-              whileHover={{
-                y: -6,
               }}
               className="
-              overflow-hidden
-
-              rounded-[28px]
-
-              bg-white
-
-              border
-              border-[#d4af37]/10
-
-              shadow-[0_15px_50px_rgba(0,0,0,0.06)]
+              grid
+              grid-cols-2
+              gap-4
               "
             >
-              <div className="overflow-hidden">
-                <motion.img
-                  whileHover={{
-                    scale: 1.08,
+              {visiblePhotos.map((photo, index) => (
+                <motion.div
+                  key={photo}
+                  initial={{
+                    opacity: 0,
+                    scale: 0.9,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
                   }}
                   transition={{
-                    duration: 0.8,
+                    delay: index * 0.08,
                   }}
-                  src={photo}
-                  alt={`Gallery ${index + 2}`}
                   className="
-                  w-full
-                  h-[220px]
-
-                  object-cover
+                  overflow-hidden
+                  rounded-[28px]
+                  bg-white
+                  border
+                  border-[#d4af37]/10
+                  shadow-[0_15px_50px_rgba(0,0,0,0.06)]
                   "
-                />
-              </div>
+                >
+                  <div
+                    className="
+                    relative
+                    aspect-[3/4]
+                    overflow-hidden
+                    "
+                  >
+                    <Image
+                      src={photo}
+                      alt={`Gallery ${index}`}
+                      fill
+                      loading="lazy"
+                      sizes="50vw"
+                      className="
+                      object-cover
+                      transition-transform
+                      duration-700
+                      hover:scale-110
+                      "
+                    />
+                  </div>
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
+          </AnimatePresence>
         </div>
 
-        {/* Closing Quote */}
+        <div
+          className="
+          flex
+          justify-center
+          gap-2
+          mt-8
+          "
+        >
+          {Array.from({
+            length: totalPages,
+          }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setPage(index)}
+              className={`
+                h-2
+                rounded-full
+                transition-all
+                duration-300
+                ${
+                  page === index
+                    ? "w-8 bg-[#d4af37]"
+                    : "w-2 bg-[#d4af37]/30"
+                }
+              `}
+            />
+          ))}
+        </div>
 
         <motion.div
           initial={{
@@ -366,12 +323,8 @@ export default function Gallery() {
           viewport={{
             once: true,
           }}
-          transition={{
-            delay: 0.3,
-          }}
           className="
           text-center
-
           mt-16
           "
         >
@@ -379,9 +332,7 @@ export default function Gallery() {
             className="
             w-20
             h-px
-
             mx-auto
-
             bg-gradient-to-r
             from-transparent
             via-[#d4af37]
@@ -392,16 +343,12 @@ export default function Gallery() {
           <p
             className="
             mt-8
-
             text-[34px]
-
             leading-tight
-
             text-[#1b1b1b]
             "
             style={{
-              fontFamily:
-                "var(--font-cormorant)",
+              fontFamily: "var(--font-cormorant)",
             }}
           >
             Capturing Moments,
