@@ -167,7 +167,7 @@ export default function Hero() {
         <div className="relative inline-block w-full">
           <motion.h1
             initial={{ opacity: 0, y: 30, filter: "blur(12px)", scale: 0.95 }}
-            animate={isMounted ? { opacity: 1, y: 0, filter: "blur(0px)", scale: 0.7 } : {}}
+            animate={isMounted ? { opacity: 1, y: 0, filter: "blur(0px)", scale: 1.2 } : {}}
             transition={{ duration: 1.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="text-[68px] font-bold leading-[0.85] tracking-[-0.03em] flex justify-center drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]"
             style={goldTextStyle}
@@ -198,7 +198,7 @@ export default function Hero() {
         <div className="relative inline-block w-full">
           <motion.h1
             initial={{ opacity: 0, y: 30, filter: "blur(12px)", scale: 0.95 }}
-            animate={isMounted ? { opacity: 1, y: 0, filter: "blur(0px)", scale: 0.7 } : {}}
+            animate={isMounted ? { opacity: 1, y: 0, filter: "blur(0px)", scale: 1.2 } : {}}
             transition={{ duration: 1.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="text-[68px] font-bold leading-[0.85] tracking-[-0.03em] flex justify-center drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]"
             style={goldTextStyle}
@@ -251,12 +251,12 @@ export default function Hero() {
           initial={{ opacity: 0, y: 60 }}
           animate={isMounted ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 1.4, duration: 2, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-[90%] max-w-[3000px] drop-shadow-[0_20px_40px_rgba(0,0,0,0.8)] z-20"
+          className="relative w-[120%] max-w-[450px] drop-shadow-[0_20px_40px_rgba(0,0,0,0.8)] z-20"
         >
           <motion.img
             src="/images/image.png"
             alt="Wedding Couple"
-            animate={{ y: [-140, -170, -140] }}
+            animate={{ y: [-160, -180, -160] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             className="relative w-full h-auto object-contain block"
             loading="eager"

@@ -9,8 +9,7 @@ import EventDetail from "@/components/EventDetail";
 import Gallery from "@/components/Gallery";
 import LoveQuote from "@/components/LoveQuote";
 import WeddingGift from "@/components/WeddingGift";
-// 1. Impor komponen RSVP yang baru dibuat
-import RSVP from "@/components/RSVP"; 
+import RSVP from "@/components/RSVP";
 
 export default function Home() {
   return (
@@ -35,21 +34,22 @@ export default function Home() {
       >
         <MusicPlayer />
 
-        <Hero />
+        <Hero  />
 
         <BrideGroom />
 
         <OurStory />
-        
+
         <Countdown />
 
         <EventDetail />
 
         <Gallery />
 
+        <LoveQuote />
+
         <WeddingGift />
-        
-        {/* 2. Tambahkan komponen RSVP di sini */}
+
         <RSVP />
       </div>
     </main>
