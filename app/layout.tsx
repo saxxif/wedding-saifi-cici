@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   Cormorant_Garamond,
   Montserrat,
@@ -9,17 +9,28 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   variable: "--font-cormorant",
   weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
 });
 
 const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-body",
   weight: ["300", "400", "500", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "Saifi & Cici Wedding",
   description: "Luxury Wedding Invitation",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+  userScalable: false,
+  themeColor: "#faf8f4",
 };
 
 export default function RootLayout({
@@ -29,7 +40,8 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="id"
+      suppressHydrationWarning
       className={`
         ${cormorant.variable}
         ${montserrat.variable}
@@ -37,32 +49,35 @@ export default function RootLayout({
     >
       <body
         className="
-        bg-[#111111]
-        antialiased
-        overflow-x-hidden
+          antialiased
+          overflow-x-hidden
+          bg-[#181818]
+          text-[#222]
         "
       >
-        <main
+        <div
           className="
-          relative
-
-          w-full
-
-          max-w-[430px]
-
-          min-h-screen
-
-          mx-auto
-
-          bg-[#faf8f4]
-
-          overflow-hidden
-
-          shadow-[0_0_100px_rgba(0,0,0,0.35)]
+            min-h-[100svh]
+            flex
+            justify-center
+            items-start
+            bg-[#181818]
           "
         >
-          {children}
-        </main>
+          <main
+            className="
+              relative
+              w-full
+              max-w-[430px]
+              min-h-[100svh]
+              bg-[#faf8f4]
+              overflow-hidden
+              shadow-[0_0_60px_rgba(0,0,0,0.35)]
+            "
+          >
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );

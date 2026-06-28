@@ -74,8 +74,13 @@ export default function MusicPlayer() {
             inset-0
             z-[99999]
             overflow-hidden
+            w-full
+            max-w-md
+            mx-auto
+            box-border
             "
           >
+            {/* Background Image */}
             <motion.div
               animate={{
                 scale: [1.08, 1, 1.08],
@@ -97,6 +102,7 @@ export default function MusicPlayer() {
               }}
             />
 
+            {/* Overlays */}
             <div className="absolute inset-0 bg-black/55" />
 
             <div
@@ -107,6 +113,7 @@ export default function MusicPlayer() {
               "
             />
 
+            {/* Ambient Golden Glow (Responsive Size) */}
             <motion.div
               animate={{
                 opacity: [0.2, 0.45, 0.2],
@@ -122,14 +129,16 @@ export default function MusicPlayer() {
               top-1/2
               -translate-x-1/2
               -translate-y-1/2
-              w-[500px]
-              h-[500px]
+              w-[280px]
+              h-[280px]
               rounded-full
               bg-[#d4b483]/20
-              blur-[180px]
+              blur-[100px]
+              pointer-events-none
               "
             />
 
+            {/* Floating Particles */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               {particles.map((particle) => (
                 <motion.div
@@ -160,28 +169,34 @@ export default function MusicPlayer() {
               ))}
             </div>
 
+            {/* Main Content Area */}
             <div
               className="
               relative
               z-20
-              min-h-screen
+              h-full
+              w-full
               flex
               items-center
               justify-center
-              px-8
+              px-6
+              py-8
+              overflow-y-auto
               "
             >
               <div
                 className="
                 w-full
-                max-w-[380px]
+                max-w-[320px]
                 text-center
+                my-auto
                 "
               >
+                {/* Top Line Divider */}
                 <motion.div
                   initial={{
                     opacity: 0,
-                    y: -20,
+                    y: -15,
                   }}
                   animate={{
                     opacity: 1,
@@ -190,13 +205,13 @@ export default function MusicPlayer() {
                   className="
                   flex
                   justify-center
-                  mb-8
+                  mb-6
                   "
                 >
                   <div
                     className="
                     h-px
-                    w-24
+                    w-20
                     bg-gradient-to-r
                     from-transparent
                     via-[#d4b483]
@@ -205,10 +220,11 @@ export default function MusicPlayer() {
                   />
                 </motion.div>
 
+                {/* Subtitle */}
                 <motion.p
                   initial={{
                     opacity: 0,
-                    y: -20,
+                    y: -15,
                   }}
                   animate={{
                     opacity: 1,
@@ -219,18 +235,19 @@ export default function MusicPlayer() {
                   }}
                   className="
                   uppercase
-                  tracking-[0.5em]
+                  tracking-[0.4em]
                   text-[#d4b483]
-                  text-[10px]
+                  text-[9px]
                   "
                 >
                   THE WEDDING OF
                 </motion.p>
 
+                {/* Bride & Groom Name */}
                 <motion.h1
                   initial={{
                     opacity: 0,
-                    y: 40,
+                    y: 30,
                     filter: "blur(15px)",
                   }}
                   animate={{
@@ -239,15 +256,15 @@ export default function MusicPlayer() {
                     filter: "blur(0px)",
                   }}
                   transition={{
-                    duration: 1.8,
+                    duration: 1.5,
                   }}
                   className="
-                  mt-8
+                  mt-6
                   text-white
-                  text-[58px]
-                  leading-[0.88]
-                  tracking-[-0.05em]
-                  drop-shadow-[0_10px_40px_rgba(0,0,0,0.8)]
+                  text-[46px]
+                  leading-[0.9]
+                  tracking-[-0.03em]
+                  drop-shadow-[0_8px_30px_rgba(0,0,0,0.8)]
                   "
                   style={{
                     fontFamily:
@@ -266,9 +283,9 @@ export default function MusicPlayer() {
                     repeat: Infinity,
                   }}
                   className="
-                  my-2
+                  my-1
                   text-[#d4b483]
-                  text-[28px]
+                  text-[24px]
                   "
                   style={{
                     fontFamily:
@@ -281,7 +298,7 @@ export default function MusicPlayer() {
                 <motion.h1
                   initial={{
                     opacity: 0,
-                    y: 40,
+                    y: 30,
                     filter: "blur(15px)",
                   }}
                   animate={{
@@ -290,14 +307,14 @@ export default function MusicPlayer() {
                     filter: "blur(0px)",
                   }}
                   transition={{
-                    duration: 2,
+                    duration: 1.7,
                   }}
                   className="
                   text-white
-                  text-[58px]
-                  leading-[0.88]
-                  tracking-[-0.05em]
-                  drop-shadow-[0_10px_40px_rgba(0,0,0,0.8)]
+                  text-[46px]
+                  leading-[0.9]
+                  tracking-[-0.03em]
+                  drop-shadow-[0_8px_30px_rgba(0,0,0,0.8)]
                   "
                   style={{
                     fontFamily:
@@ -307,6 +324,44 @@ export default function MusicPlayer() {
                   Nicky
                 </motion.h1>
 
+                {/* Tagline */}
+                <motion.p
+                  initial={{
+                    opacity: 0,
+                  }}
+                  animate={{
+                    opacity: 1,
+                  }}
+                  transition={{
+                    delay: 0.6,
+                  }}
+                  className="
+                  mt-6
+                  text-white/75
+                  uppercase
+                  tracking-[0.2em]
+                  text-[10px]
+                  leading-relaxed
+                  "
+                >
+                  Forever Begins Here
+                </motion.p>
+
+                {/* Center Line Divider */}
+                <div
+                  className="
+                  w-24
+                  h-px
+                  mx-auto
+                  mt-6
+                  bg-gradient-to-r
+                  from-transparent
+                  via-[#d4b483]
+                  to-transparent
+                  "
+                />
+
+                {/* Wedding Date */}
                 <motion.p
                   initial={{
                     opacity: 0,
@@ -318,50 +373,16 @@ export default function MusicPlayer() {
                     delay: 0.8,
                   }}
                   className="
-                  mt-8
-                  text-white/75
-                  uppercase
-                  tracking-[0.25em]
-                  text-[11px]
-                  leading-6
-                  "
-                >
-                  Forever Begins Here
-                </motion.p>
-
-                <div
-                  className="
-                  w-32
-                  h-px
-                  mx-auto
-                  mt-8
-                  bg-gradient-to-r
-                  from-transparent
-                  via-[#d4b483]
-                  to-transparent
-                  "
-                />
-
-                <motion.p
-                  initial={{
-                    opacity: 0,
-                  }}
-                  animate={{
-                    opacity: 1,
-                  }}
-                  transition={{
-                    delay: 1,
-                  }}
-                  className="
-                  mt-8
+                  mt-6
                   text-white/90
-                  text-[12px]
-                  tracking-[0.35em]
+                  text-[11px]
+                  tracking-[0.3em]
                   "
                 >
                   12 JULY 2026
                 </motion.p>
 
+                {/* Open Invitation Button */}
                 <motion.button
                   initial={{
                     opacity: 0,
@@ -372,27 +393,27 @@ export default function MusicPlayer() {
                     y: 0,
                   }}
                   transition={{
-                    delay: 1.4,
+                    delay: 1.2,
                   }}
                   whileHover={{
-                    scale: 1.03,
+                    scale: 1.02,
                   }}
                   whileTap={{
                     scale: 0.98,
                   }}
                   onClick={openInvitation}
                   className="
-                  mt-12
+                  mt-8
                   w-full
-                  py-4
+                  py-3.5
                   rounded-full
                   border
                   border-[#d4b483]
                   bg-white/5
-                  backdrop-blur-xl
+                  backdrop-blur-md
                   text-[#d4b483]
-                  text-[11px]
-                  tracking-[0.3em]
+                  text-[10px]
+                  tracking-[0.25em]
                   transition-all
                   duration-500
                   hover:bg-[#d4b483]
@@ -402,9 +423,10 @@ export default function MusicPlayer() {
                   OPEN INVITATION
                 </motion.button>
 
+                {/* Mouse/Scroll Icon Indicator */}
                 <motion.div
                   animate={{
-                    y: [0, 8, 0],
+                    y: [0, 6, 0],
                   }}
                   transition={{
                     duration: 2,
@@ -413,32 +435,32 @@ export default function MusicPlayer() {
                   className="
                   flex
                   justify-center
-                  mt-14
+                  mt-10
                   "
                 >
                   <div
                     className="
-                    w-7
-                    h-12
+                    w-6
+                    h-10
                     rounded-full
                     border
                     border-white/20
                     flex
                     justify-center
-                    pt-2
+                    pt-1.5
                     "
                   >
                     <motion.div
                       animate={{
-                        y: [0, 16, 0],
+                        y: [0, 12, 0],
                       }}
                       transition={{
                         duration: 2,
                         repeat: Infinity,
                       }}
                       className="
-                      w-1.5
-                      h-1.5
+                      w-1
+                      h-1
                       rounded-full
                       bg-[#d4b483]
                       "

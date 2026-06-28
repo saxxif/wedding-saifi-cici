@@ -3,731 +3,291 @@
 import { motion } from "framer-motion";
 import { useEffect, useState, useCallback, useMemo } from "react";
 
-const fadeScale = {
-  opacity: [0.2, 0.45, 0.2],
-  scale: [1, 1.15, 1],
-};
-
+// ==========================================
+// 1. STYLES (Gradasi Emas Mewah)
+// ==========================================
 const goldTextStyle = {
-  fontFamily: "var(--font-cormorant)",
-  background:
-    "linear-gradient(180deg,#f5e2bb,#c89b56,#9b6a2e)",
+  fontFamily: "var(--font-cormorant), serif",
+  background: "linear-gradient(135deg, #fdfbf7 0%, #d4af37 35%, #9b6a2e 60%, #e6c887 80%, #fdfbf7 100%)",
   WebkitBackgroundClip: "text",
   color: "transparent",
 };
 
+const premiumNoiseLayer = `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`;
+
+// ==========================================
+// 2. MAIN COMPONENT
+// ==========================================
 export default function Hero() {
-  const [heroReady, setHeroReady] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    const handleOpenInvitation = () => {
-      setHeroReady(true);
-    };
-
-    window.addEventListener(
-      "open-invitation",
-      handleOpenInvitation
-    );
-
-    return () => {
-      window.removeEventListener(
-        "open-invitation",
-        handleOpenInvitation
-      );
-    };
+    setIsMounted(true);
   }, []);
 
   const scrollToNext = useCallback(() => {
-    document
-      .getElementById("bride-groom")
-      ?.scrollIntoView({
-        behavior: "smooth",
-      });
+    document.getElementById("bride-groom")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   }, []);
 
-  const goldDust = useMemo(
-    () =>
-      Array.from({ length: 18 }, (_, i) => ({
-        id: i,
-        left: `${(i * 7) % 100}%`,
-        duration: 15 + i,
-        delay: i * 0.5,
-      })),
-    []
-  );
+  // --- PARTICLE ENGINES ---
+  const backgroundDust = useMemo(() => Array.from({ length: 25 }, (_, i) => ({
+    id: `bg-dust-${i}`,
+    left: (i * 17) % 100,
+    size: 1 + (i % 2),
+    duration: 18 + (i % 12),
+    delay: (i % 5) * 0.4,
+    drift: (i % 2 === 0 ? 1 : -1) * (15 + (i % 20)),
+  })), []);
+
+  const midSparks = useMemo(() => Array.from({ length: 12 }, (_, i) => ({
+    id: `mid-spark-${i}`,
+    left: (i * 31) % 100,
+    size: 2 + (i % 2),
+    duration: 14 + (i % 8),
+    delay: (i % 3) * 0.7,
+    drift: (i % 2 === 0 ? 1 : -1) * (20 + (i % 25)),
+  })), []);
 
   return (
     <section
       className="
       relative
       h-screen
+      w-full
+      max-w-md
+      mx-auto
       overflow-hidden
-      bg-[#f8f4ed]
+      bg-[#050505]
+      box-border
+      flex
+      flex-col
+      justify-between
+      px-6
+      py-12
       "
     >
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[#f8f4ed]" />
-
-        <motion.div
-          initial={{
-            scale: 1.25,
-            opacity: 0,
-          }}
-          animate={
-            heroReady
-              ? {
-                  scale: 1,
-                  opacity: 1,
-                }
-              : undefined
-          }
-          transition={{
-            duration: 2,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="
-          absolute
-          left-1/2
-          top-0
-          -translate-x-1/2
-          h-[120%]
-          w-[125%]
-          rounded-t-[1000px]
-          bg-[#fbf8f2]
-          shadow-[inset_0_0_120px_rgba(0,0,0,0.04)]
-          "
+      {/* ========================================== */}
+      {/* BACKGROUND & ATMOSPHERE RENDERER */}
+      {/* ========================================== */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div 
+          className="absolute inset-0 opacity-[0.05] mix-blend-screen"
+          style={{ backgroundImage: premiumNoiseLayer }}
         />
-
+        <div className="absolute inset-0 bg-gradient-to-br from-[#120e0a] via-[#050505] to-[#0a0805]" />
+        
+        {/* Pendaran Cahaya Spot di Tengah (Aura) */}
         <motion.div
-          initial={{
-            x: 150,
-            opacity: 0,
-          }}
-          animate={
-            heroReady
-              ? {
-                  x: 0,
-                  opacity: 1,
-                }
-              : undefined
-          }
-          transition={{
-            duration: 2,
-          }}
-          className="
-          absolute
-          right-[-30%]
-          top-0
-          h-full
-          w-[70%]
-          rounded-l-[400px]
-          bg-[#e9dfd0]
-          "
-        />
-
-        <motion.div
-          animate={fadeScale}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            repeatType: "loop",
-          }}
-          className="
-          absolute
-          left-1/2
-          top-[30%]
-          -translate-x-1/2
-          h-[500px]
-          w-[500px]
-          rounded-full
-          bg-[#d6b27c]/25
-          blur-[60px]
-          "
+          animate={{ opacity: [0.15, 0.35, 0.15], scale: [1, 1.1, 1] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-[#c89b56]/20 blur-[130px]"
         />
       </div>
 
-      <motion.img
-        src="/images/flower.png"
-        alt=""
-        initial={{
-          opacity: 0,
-          x: -100,
-          y: -100,
-        }}
-        animate={{
-          opacity: 0.5,
-          x: 0,
-          y: [0, -15, 0],
-          rotate: [0, 5, 0],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          repeatType: "mirror",
-        }}
-        className="
-        absolute
-        left-[-60px]
-        top-[-30px]
-        w-[220px]
-        blur-[2px]
-        will-change-transform
-        "
-      />
+      {/* ========================================== */}
+      {/* INLINE HIGH-RESOLUTION SVG ORNAMENTS */}
+      {/* ========================================== */}
+      <div className="absolute inset-0 pointer-events-none z-20 p-5">
+        <div className="relative w-full h-full border-[0.5px] border-[#d4af37]/20 rounded-xl">
+          <svg className="absolute -top-[1px] -left-[1px] w-8 h-8 text-[#d4af37]/60" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 40V0H40" stroke="currentColor" strokeWidth="1" />
+            <circle cx="4" cy="4" r="2" fill="currentColor" />
+          </svg>
+          <svg className="absolute -top-[1px] -right-[1px] w-8 h-8 text-[#d4af37]/60" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M40 40V0H0" stroke="currentColor" strokeWidth="1" />
+            <circle cx="36" cy="4" r="2" fill="currentColor" />
+          </svg>
+          <svg className="absolute -bottom-[1px] -left-[1px] w-8 h-8 text-[#d4af37]/60" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M40 40H0V0" stroke="currentColor" strokeWidth="1" />
+            <circle cx="4" cy="36" r="2" fill="currentColor" />
+          </svg>
+          <svg className="absolute -bottom-[1px] -right-[1px] w-8 h-8 text-[#d4af37]/60" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 40H40V0" stroke="currentColor" strokeWidth="1" />
+            <circle cx="36" cy="36" r="2" fill="currentColor" />
+          </svg>
+        </div>
+      </div>
 
-      <motion.img
-        src="/images/flower.png"
-        alt=""
-        initial={{
-          opacity: 0,
-          x: 100,
-          y: 100,
-        }}
-        animate={{
-          opacity: 0.4,
-          x: 0,
-          y: [0, 15, 0],
-          rotate: [0, -5, 0],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          repeatType: "mirror",
-        }}
-        className="
-        absolute
-        right-[-80px]
-        bottom-[-20px]
-        w-[260px]
-        blur-[4px]
-        will-change-transform
-        "
-      />
+      {/* ========================================== */}
+      {/* PARTICLE RENDERER */}
+      {/* ========================================== */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
+        {isMounted && (
+          <>
+            {backgroundDust.map((p) => (
+              <motion.div
+                key={p.id}
+                animate={{ y: [0, -1000], x: [0, p.drift], opacity: [0, 0.4, 0] }}
+                transition={{ duration: p.duration, repeat: Infinity, ease: "linear", delay: p.delay }}
+                className="absolute rounded-full bg-[#f9f5e8] blur-[1px]"
+                style={{ left: `${p.left}%`, width: `${p.size}px`, height: `${p.size}px`, bottom: "-20px" }}
+              />
+            ))}
+            {midSparks.map((p) => (
+              <motion.div
+                key={p.id}
+                animate={{ y: [0, -1000], x: [0, -p.drift], opacity: [0, 0.8, 0] }}
+                transition={{ duration: p.duration, repeat: Infinity, ease: "linear", delay: p.delay }}
+                className="absolute rounded-full bg-[#d4af37] shadow-[0_0_8px_rgba(212,175,55,0.8)]"
+                style={{ left: `${p.left}%`, width: `${p.size}px`, height: `${p.size}px`, bottom: "-20px" }}
+              />
+            ))}
+          </>
+        )}
+      </div>
 
+      {/* ========================================== */}
+      {/* TOP SECTION: KOP */}
+      {/* ========================================== */}
       <motion.div
-        animate={{
-          opacity: [0.3, 1, 0.3],
-          scale: [1, 1.3, 1],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-        }}
-        className="
-        absolute
-        left-[12%]
-        top-[28%]
-        text-[#d4b483]/70
-        text-xl
-        "
+        initial={{ opacity: 0, y: -20 }}
+        animate={isMounted ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+        className="relative z-30 text-center w-full mt-4 select-none flex flex-col items-center"
       >
-        ✦
-      </motion.div>
-
-      <motion.div
-        animate={{
-          opacity: [0.3, 1, 0.3],
-          scale: [1, 1.4, 1],
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-        }}
-        className="
-        absolute
-        right-[14%]
-        top-[35%]
-        text-[#d4b483]/60
-        text-lg
-        "
-      >
-        ✦
-      </motion.div>
-
-      {goldDust.map((dust) => (
-        <motion.div
-          key={dust.id}
-          animate={{
-            y: [0, -800],
-            opacity: [0, 1, 1, 0],
-            x: [0, 20, -10],
-          }}
-          transition={{
-            duration: dust.duration,
-            repeat: Infinity,
-            ease: "linear",
-            delay: dust.delay,
-          }}
-          className="
-          absolute
-          h-[3px]
-          w-[3px]
-          rounded-full
-          bg-[#d4b483]
-          shadow-[0_0_15px_rgba(212,180,131,0.8)]
-          will-change-transform
-          "
-          style={{
-            left: dust.left,
-            bottom: "-50px",
-          }}
-        />
-      ))}
-
-      <motion.div
-        initial={{
-          opacity: 0,
-          scale: 0.5,
-          y: -60,
-          rotate: -15,
-        }}
-        animate={
-          heroReady
-            ? {
-                opacity: 1,
-                scale: 1,
-                y: 0,
-                rotate: 0,
-              }
-            : undefined
-        }
-        transition={{
-          duration: 1.5,
-          ease: [0.22, 1, 0.36, 1],
-        }}
-        className="
-        absolute
-        top-10
-        left-1/2
-        -translate-x-1/2
-        z-30
-        text-center
-        "
-      >
-        <h2
-          className="text-[55px] leading-none"
-          style={{
-            fontFamily: "var(--font-cormorant)",
-            background:
-              "linear-gradient(180deg,#efd8aa,#c89b56,#9e6b2c)",
-            WebkitBackgroundClip: "text",
-            color: "transparent",
-          }}
-        >
-          N | S
-        </h2>
-
-        <p
-          className="
-          mt-4
-          uppercase
-          tracking-[0.4em]
-          text-[10px]
-          text-[#826840]
-          "
-        >
+        <div className="flex items-center justify-center gap-3 opacity-80 mb-4">
+          <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-[#c89b56]" />
+          <div className="w-1.5 h-1.5 rotate-45 bg-[#c89b56]" />
+          <div className="h-[1px] w-8 bg-gradient-to-l from-transparent to-[#c89b56]" />
+        </div>
+        <p className="uppercase tracking-[0.5em] text-[8.5px] text-[#b09467] font-medium pl-[0.5em]">
           THE WEDDING OF
         </p>
       </motion.div>
 
-      <motion.div
-        initial={{
-          opacity: 0,
-          scaleX: 0,
-        }}
-        animate={
-          heroReady
-            ? {
-                opacity: 1,
-                scaleX: 1,
-              }
-            : undefined
-        }
-        transition={{
-          delay: 0.4,
-          duration: 1,
-        }}
-        className="
-        absolute
-        top-[115px]
-        left-1/2
-        -translate-x-1/2
-        flex
-        items-center
-        gap-4
-        z-30
-        "
-      >
-        <div className="h-px w-16 bg-[#c89b56]" />
-        <div className="text-[#c89b56]">✦</div>
-        <div className="h-px w-16 bg-[#c89b56]" />
-      </motion.div>
-
-      <div
-        className="
-        absolute
-        top-[160px]
-        left-1/2
-        -translate-x-1/2
-        z-30
-        text-center
-        "
-      >
-        <div className="relative">
+      {/* ========================================== */}
+      {/* MIDDLE SECTION: TYPOGRAPHY (BUG FIXED) */}
+      {/* ========================================== */}
+      <div className="relative z-30 text-center w-full flex-1 flex flex-col justify-center select-none pt-2">
+        
+        {/* NAMA PERTAMA: NICKY */}
+        <div className="relative inline-block w-full">
           <motion.h1
-            initial={{
-              opacity: 0,
-              y: 80,
-              filter: "blur(20px)",
-            }}
-            animate={
-              heroReady
-                ? {
-                    opacity: 1,
-                    y: 0,
-                    filter: "blur(0px)",
-                  }
-                : undefined
-            }
-            transition={{
-              delay: 0.8,
-              duration: 1.5,
-            }}
-            className="
-            text-[78px]
-            leading-[0.82]
-            tracking-[-0.05em]
-            "
+            initial={{ opacity: 0, y: 30, filter: "blur(12px)", scale: 0.95 }}
+            animate={isMounted ? { opacity: 1, y: 0, filter: "blur(0px)", scale: 0.7 } : {}}
+            transition={{ duration: 1.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="text-[68px] font-bold leading-[0.85] tracking-[-0.03em] flex justify-center drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]"
             style={goldTextStyle}
           >
             NICKY
           </motion.h1>
-
-          <motion.div
-            animate={{
-              x: ["-200%", "300%"],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            className="
-            absolute
-            inset-0
-            w-20
-            bg-gradient-to-r
-            from-transparent
-            via-white/40
-            to-transparent
-            blur-md
-            will-change-transform
-            "
-          />
+          {isMounted && (
+            <motion.div
+              animate={{ x: ["-100%", "300%"] }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: "linear", delay: 1 }}
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent blur-[5px] pointer-events-none mix-blend-overlay"
+            />
+          )}
         </div>
 
+        {/* ORNAMEN AMPERSAND (&) */}
         <motion.div
-          initial={{
-            opacity: 0,
-            scale: 0.4,
-          }}
-          animate={
-            heroReady
-              ? {
-                  opacity: 1,
-                  scale: 1,
-                }
-              : undefined
-          }
-          transition={{
-            delay: 1.2,
-            duration: 1,
-          }}
-          className="text-[70px] leading-none"
-          style={goldTextStyle}
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={isMounted ? { opacity: 0.9, scale: 1 } : {}}
+          transition={{ delay: 0.8, duration: 1.5, ease: "easeOut" }}
+          className="text-[#c89b56] text-[36px] my-3 italic font-light relative"
+          style={{ fontFamily: "var(--font-cormorant), serif" }}
         >
           &
         </motion.div>
 
-        <div className="relative">
+        {/* NAMA KEDUA: SAIFI */}
+        <div className="relative inline-block w-full">
           <motion.h1
-            initial={{
-              opacity: 0,
-              y: 80,
-              filter: "blur(20px)",
-            }}
-            animate={
-              heroReady
-                ? {
-                    opacity: 1,
-                    y: 0,
-                    filter: "blur(0px)",
-                  }
-                : undefined
-            }
-            transition={{
-              delay: 1.5,
-              duration: 1.5,
-            }}
-            className="
-            text-[78px]
-            leading-[0.82]
-            tracking-[-0.05em]
-            "
+            initial={{ opacity: 0, y: 30, filter: "blur(12px)", scale: 0.95 }}
+            animate={isMounted ? { opacity: 1, y: 0, filter: "blur(0px)", scale: 0.7 } : {}}
+            transition={{ duration: 1.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="text-[68px] font-bold leading-[0.85] tracking-[-0.03em] flex justify-center drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]"
             style={goldTextStyle}
           >
             SAIFI
           </motion.h1>
+          {isMounted && (
+            <motion.div
+              animate={{ x: ["-100%", "300%"] }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: "linear", delay: 2.5 }}
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent blur-[5px] pointer-events-none mix-blend-overlay"
+            />
+          )}
+        </div>
 
+        {/* TAGLINE DESTINY */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={isMounted ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 1.2, duration: 1.2 }}
+          className="mt-8 flex flex-col items-center gap-4"
+        >
+          <p className="uppercase tracking-[0.35em] text-[9px] text-[#fdfbf7] opacity-80 font-light pl-[0.35em]">
+            Two Souls, One Destiny
+          </p>
+        </motion.div>
+      </div>
+
+      {/* ========================================== */}
+      {/* BOTTOM SECTION: FOTO & ACTION */}
+      {/* ========================================== */}
+      <div className="relative z-20 w-full flex flex-col items-center justify-end">
+        
+        {/* Parallax Orbital Rings */}
+        <div className="absolute inset-x-0 bottom-[100px] h-[250px] pointer-events-none z-10 flex justify-center items-center">
           <motion.div
-            animate={{
-              x: ["-200%", "300%"],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            className="
-            absolute
-            inset-0
-            w-20
-            bg-gradient-to-r
-            from-transparent
-            via-white/40
-            to-transparent
-            blur-md
-            will-change-transform
-            "
+            animate={{ rotateZ: 360, rotateX: 60, rotateY: 10 }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            className="absolute w-[140%] h-[200px] rounded-full border-[0.5px] border-[#d4af37]/20 border-t-[#d4af37]/60"
+          />
+          <motion.div
+            animate={{ rotateZ: -360, rotateX: 65, rotateY: -10 }}
+            transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+            className="absolute w-[120%] h-[180px] rounded-full border-[0.5px] border-[#c89b56]/15 border-b-[#c89b56]/50"
           />
         </div>
 
-        <motion.p
-          initial={{
-            opacity: 0,
-          }}
-          animate={
-            heroReady
-              ? {
-                  opacity: 1,
-                }
-              : undefined
-          }
-          transition={{
-            delay: 2.2,
-            duration: 1,
-          }}
-          className="
-          mt-4
-          uppercase
-          tracking-[0.25em]
-          text-[11px]
-          text-[#4f4437]
-          "
-        >
-          TWO SOULS, ONE DESTINY
-        </motion.p>
-      </div>
-
-      <motion.div
-        initial={{
-          opacity: 0,
-          scale: 0.6,
-        }}
-        animate={{
-          opacity: 1,
-          scale: 1,
-          rotate: 360,
-        }}
-        transition={{
-          opacity: {
-            delay: 1.8,
-            duration: 2,
-          },
-          scale: {
-            delay: 1.8,
-            duration: 2,
-          },
-          rotate: {
-            duration: 30,
-            repeat: Infinity,
-            ease: "linear",
-          },
-        }}
-        className="
-        absolute
-        left-1/2
-        bottom-[170px]
-        -translate-x-1/2
-        h-[250px]
-        w-[700px]
-        rounded-full
-        border
-        border-[#d4b483]/30
-        will-change-transform
-        "
-      />
-
-      <motion.div
-        animate={{
-          rotate: [360, 0],
-        }}
-        transition={{
-          duration: 18,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-        className="
-        absolute
-        left-1/2
-        bottom-[170px]
-        -translate-x-1/2
-        h-[210px]
-        w-[620px]
-        rounded-full
-        border-t-2
-        border-[#f7dca5]
-        will-change-transform
-        "
-      />
-
-      <motion.div
-        initial={{
-          x: "-150%",
-        }}
-        animate={
-          heroReady
-            ? {
-                x: "350%",
-              }
-            : undefined
-        }
-        transition={{
-          delay: 2,
-          duration: 3,
-          ease: "easeInOut",
-        }}
-        className="
-        absolute
-        inset-y-0
-        w-32
-        bg-gradient-to-r
-        from-transparent
-        via-white/40
-        to-transparent
-        blur-3xl
-        z-40
-        will-change-transform
-        "
-      />
-
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: 220,
-          scale: 0.88,
-        }}
-        animate={
-          heroReady
-            ? {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-              }
-            : undefined
-        }
-        transition={{
-          delay: 1.8,
-          duration: 2.4,
-          ease: [0.22, 1, 0.36, 1],
-        }}
-        className="
-        absolute
-        bottom-14
-        left-1/2
-        -translate-x-1/2
-        z-20
-        w-[100%]
-        max-w-[720px]
-        "
-      >
-        <motion.img
-          src="/images/image.png"
-          alt="Wedding Couple"
-          animate={{
-            y: [50, 30, 50],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            repeatType: "mirror",
-          }}
-          className="
-          w-full
-          object-contain
-          will-change-transform
-          "
-          loading="eager"
-          decoding="async"
-        />
-      </motion.div>
-
-      <motion.button
-        onClick={scrollToNext}
-        initial={{
-          opacity: 0,
-          y: 30,
-        }}
-        animate={
-          heroReady
-            ? {
-                opacity: 1,
-                y: 0,
-              }
-            : undefined
-        }
-        transition={{
-          delay: 3.8,
-          duration: 3,
-        }}
-        className="
-        absolute
-        bottom-0
-        left-1/2
-        -translate-x-1/2
-        z-30
-        text-center
-        "
-      >
-        <p
-          className="
-          uppercase
-          tracking-[0.35em]
-          text-[10px]
-          text-[#9a7b4d]
-          "
-        >
-          Scroll Down
-        </p>
-
+        {/* Kontainer Foto Mempelai */}
         <motion.div
-          animate={{
-            y: [0, 10, 0],
-          }}
-          transition={{
-            duration: 5,
-            repeat: Infinity,
-          }}
-          className="
-          mt-1
-          text-xl
-          text-[#9a7b4d]
-          will-change-transform
-          "
+          initial={{ opacity: 0, y: 60 }}
+          animate={isMounted ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 1.4, duration: 2, ease: [0.16, 1, 0.3, 1] }}
+          className="relative w-[90%] max-w-[3000px] drop-shadow-[0_20px_40px_rgba(0,0,0,0.8)] z-20"
         >
-          ˅
+          <motion.img
+            src="/images/image.png"
+            alt="Wedding Couple"
+            animate={{ y: [-140, -170, -140] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="relative w-full h-auto object-contain block"
+            loading="eager"
+          />
         </motion.div>
-      </motion.button>
+
+        {/* Tombol Scroll Indicator */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isMounted ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 1.8, duration: 1.5 }}
+          className="relative z-40 w-full flex flex-col items-center mt-6 mb-2"
+        >
+          <button
+            onClick={scrollToNext}
+            className="group relative flex flex-col items-center justify-center bg-transparent border-none cursor-pointer focus:outline-none"
+          >
+            <span className="uppercase tracking-[0.4em] text-[8.5px] text-[#c89b56] font-semibold mb-2 group-hover:text-[#fdfbf7] transition-colors duration-500 pl-[0.4em]">
+              Scroll to Explore
+            </span>
+            <motion.div
+              animate={{ y: [0, 6, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="w-5 h-8 rounded-full border-[0.5px] border-[#c89b56]/40 flex justify-center pt-[3px] group-hover:border-[#fdfbf7]/60 transition-colors duration-500"
+            >
+              <div className="w-[2px] h-2 rounded-full bg-[#c89b56] group-hover:bg-[#fdfbf7] transition-colors duration-500" />
+            </motion.div>
+          </button>
+        </motion.div>
+
+      </div>
     </section>
   );
 }

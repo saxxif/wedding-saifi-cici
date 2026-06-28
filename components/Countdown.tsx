@@ -4,7 +4,10 @@ import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 
 export default function Countdown() {
-  const weddingDate = new Date("2026-07-12T08:00:00").getTime();
+  const weddingDate = useMemo(() => new Date("2026-07-12T08:00:00").getTime(), []);
+  
+  // State untuk mengunci render client (mencegah hydration mismatch)
+  const [isMounted, setIsMounted] = useState(false);
 
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -15,47 +18,29 @@ export default function Countdown() {
 
   const particles = useMemo(
     () =>
-      Array.from({ length: 120 }, (_, i) => ({
+      Array.from({ length: 24 }, (_, i) => ({
         id: i,
-        left: Math.random() * 100,
-        size: Math.random() * 4 + 1,
-        duration: Math.random() * 20 + 18,
-        delay: Math.random() * 10,
-        drift: Math.random() * 200 - 100,
+        left: (i * 37) % 100, // Mengganti Math.random() dengan deterministik matematika agar tidak memicu mismatch
+        size: 2 + (i % 4),
+        duration: 18 + (i % 10),
+        delay: i * 0.4,
+        drift: (i % 2 === 0 ? 1 : -1) * (40 + (i % 40)),
       })),
     []
   );
 
   useEffect(() => {
+    setIsMounted(true);
+
     const interval = setInterval(() => {
       const now = new Date().getTime();
       const distance = weddingDate - now;
 
       setTimeLeft({
-        days: Math.max(
-          0,
-          Math.floor(distance / (1000 * 60 * 60 * 24))
-        ),
-        hours: Math.max(
-          0,
-          Math.floor(
-            (distance % (1000 * 60 * 60 * 24)) /
-              (1000 * 60 * 60)
-          )
-        ),
-        minutes: Math.max(
-          0,
-          Math.floor(
-            (distance % (1000 * 60 * 60)) /
-              (1000 * 60)
-          )
-        ),
-        seconds: Math.max(
-          0,
-          Math.floor(
-            (distance % (1000 * 60)) / 1000
-          )
-        ),
+        days: Math.max(0, Math.floor(distance / (1000 * 60 * 60 * 24))),
+        hours: Math.max(0, Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))),
+        minutes: Math.max(0, Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))),
+        seconds: Math.max(0, Math.floor((distance % (1000 * 60)) / 1000)),
       });
     }, 1000);
 
@@ -69,60 +54,36 @@ export default function Countdown() {
       overflow-hidden
       py-24
       bg-black
+      w-full
+      max-w-md
+      mx-auto
+      box-border
       "
     >
-      {/* Background */}
+      {/* Background Image */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <motion.div
+          animate={{
+            scale: [1, 1.05, 1],
+          }}
+          transition={{
+            duration: 30,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: "url('/images/infinity-castle.jpg')",
+          }}
+        />
+        <div className="absolute inset-0 bg-black/80" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,180,131,0.12),transparent_75%)]" />
+      </div>
 
-      <motion.div
-        animate={{
-          scale: [1, 1.08, 1],
-        }}
-        transition={{
-          duration: 30,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="
-        absolute
-        inset-0
-        bg-cover
-        bg-center
-        "
-        style={{
-          backgroundImage:
-            "url('/images/infinity-castle.jpg')",
-        }}
-      />
-
-      <div className="absolute inset-0 bg-black/80" />
-
-      <div
-        className="
-        absolute
-        inset-0
-        bg-[radial-gradient(circle_at_center,rgba(212,180,131,0.10),transparent_70%)]
-        "
-      />
-
-      {/* Monogram */}
-
-      <div
-        className="
-        absolute
-        inset-0
-        flex
-        items-center
-        justify-center
-        pointer-events-none
-        "
-      >
+      {/* Monogram Background */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 select-none">
         <span
-          className="
-          text-[180px]
-          md:text-[700px]
-          leading-none
-          text-white/[0.03]
-          "
+          className="text-[220px] leading-none text-white/[0.03]"
           style={{
             fontFamily: "var(--font-cormorant)",
           }}
@@ -131,12 +92,11 @@ export default function Countdown() {
         </span>
       </div>
 
-      {/* Gold Glow */}
-
+      {/* Ambient Gold Glow (Dioptimalkan ukurannya untuk HP) */}
       <motion.div
         animate={{
-          opacity: [0.25, 0.5, 0.25],
-          scale: [1, 1.1, 1],
+          opacity: [0.25, 0.45, 0.25],
+          scale: [1, 1.08, 1],
         }}
         transition={{
           duration: 10,
@@ -148,30 +108,26 @@ export default function Countdown() {
         top-1/2
         -translate-x-1/2
         -translate-y-1/2
-        w-[1200px]
-        h-[1200px]
+        w-[340px]
+        h-[340px]
         rounded-full
-        bg-[#d4b483]/10
-        blur-[250px]
+        bg-[#d4b483]/15
+        blur-[80px]
+        pointer-events-none
+        z-10
         "
       />
 
-      {/* Floating Dust */}
-
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {particles.map((particle) => (
+      {/* Floating Dust (Hanya merender ketika isMounted true di browser) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
+        {isMounted && particles.map((particle) => (
           <motion.div
             key={particle.id}
             animate={{
-              y: [0, -1600],
-              x: [
-                0,
-                particle.drift,
-                -particle.drift * 0.5,
-                particle.drift * 0.3,
-              ],
+              y: [0, -1200],
+              x: [0, particle.drift, -particle.drift * 0.5, particle.drift * 0.2],
               opacity: [0, 1, 1, 0],
-              scale: [0.5, 1, 1.4, 0.5],
+              scale: [0.6, 1, 1.3, 0.6],
             }}
             transition={{
               duration: particle.duration,
@@ -179,214 +135,69 @@ export default function Countdown() {
               ease: "linear",
               delay: particle.delay,
             }}
-            className="
-            absolute
-            rounded-full
-            bg-[#d4b483]
-            shadow-[0_0_25px_rgba(212,180,131,0.9)]
-            "
+            className="absolute rounded-full bg-[#d4b483] shadow-[0_0_15px_rgba(212,180,131,0.8)]"
             style={{
               left: `${particle.left}%`,
               width: `${particle.size}px`,
               height: `${particle.size}px`,
-              bottom: "-120px",
+              bottom: "-100px",
             }}
           />
         ))}
       </div>
 
-      <div
-        className="
-        relative
-        z-20
-        max-w-md
-        mx-auto
-        px-5
-        "
-      >
-        {/* Header */}
-
+      {/* Main Content Area */}
+      <div className="relative z-20 w-full px-6 box-border">
+        
+        {/* Header Countdown */}
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 30,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-          }}
-          className="text-center"
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center select-none"
         >
-          <p
-            className="
-            uppercase
-            tracking-[6px]
-            text-[#d4b483]
-            text-[10px]
-            "
-          >
+          <p className="uppercase tracking-[5px] text-[#d4b483] text-[9.5px] font-semibold">
             WEDDING COUNTDOWN
           </p>
 
-          <h2
-            className="
-            mt-5
-            text-[60px]
-            leading-[0.9]
-            text-white
-            "
-            style={{
-              fontFamily: "var(--font-cormorant)",
-            }}
-          >
-          </h2>
-
-          <div
-            className="
-            flex
-            justify-center
-            mt-8
-            "
-          >
-            <div
-              className="
-              px-8
-              py-3
-              rounded-full
-              border
-              border-[#d4b483]/20
-              bg-white/[0.04]
-              backdrop-blur-xl
-              text-[#d4b483]
-              tracking-[4px]
-              text-[11px]
-              "
-            >
+          <div className="flex justify-center mt-6">
+            <div className="px-6 py-2.5 rounded-full border border-[#d4b483]/20 bg-white/[0.04] backdrop-blur-md text-[#d4b483] tracking-[3px] text-[10.5px] font-medium">
               12 JULY 2026
             </div>
           </div>
         </motion.div>
 
-        {/* Countdown Card */}
-
+        {/* Countdown Grid Box */}
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 60,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-          }}
-          transition={{
-            duration: 1,
-          }}
-          className="
-          mt-12
-
-          rounded-[42px]
-
-          border
-          border-white/10
-
-          bg-white/[0.05]
-
-          backdrop-blur-3xl
-
-          p-5
-
-          shadow-[0_40px_140px_rgba(0,0,0,0.5)]
-          "
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="mt-10 rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-xl p-4 shadow-[0_30px_100px_rgba(0,0,0,0.6)]"
         >
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3.5">
             {[
-              {
-                label: "DAYS",
-                value: timeLeft.days,
-              },
-              {
-                label: "HOURS",
-                value: timeLeft.hours,
-              },
-              {
-                label: "MINUTES",
-                value: timeLeft.minutes,
-              },
-              {
-                label: "SECONDS",
-                value: timeLeft.seconds,
-              },
+              { label: "DAYS", value: timeLeft.days },
+              { label: "HOURS", value: timeLeft.hours },
+              { label: "MINUTES", value: timeLeft.minutes },
+              { label: "SECONDS", value: timeLeft.seconds },
             ].map((item) => (
               <motion.div
                 key={item.label}
-                whileHover={{
-                  y: -5,
-                  scale: 1.02,
-                }}
-                className="
-                relative
-
-                rounded-[28px]
-
-                border
-                border-white/10
-
-                bg-white/[0.03]
-
-                py-8
-                "
+                whileTap={{ scale: 0.98 }}
+                className="relative rounded-[22px] border border-white/5 bg-white/[0.02] py-6 overflow-hidden"
               >
-                <div
-                  className="
-                  absolute
-                  inset-0
-                  rounded-[28px]
-                  bg-[#d4b483]/[0.03]
-                  "
-                />
-
-                <div
-                  className="
-                  relative
-                  text-center
-                  "
-                >
+                <div className="absolute inset-0 bg-[#d4b483]/[0.02] pointer-events-none" />
+                <div className="relative text-center select-none">
                   <div
-                    className="
-                    text-[52px]
-                    leading-none
-                    text-white
-                    "
+                    className="text-[44px] leading-none text-white font-medium drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]"
                     style={{
-                      fontFamily:
-                        "var(--font-cormorant)",
+                      fontFamily: "var(--font-cormorant), serif",
                     }}
                   >
-                    {String(item.value).padStart(
-                      2,
-                      "0"
-                    )}
+                    {String(item.value).padStart(2, "0")}
                   </div>
-
-                  <div
-                    className="
-                    mt-3
-
-                    text-[#d4b483]
-
-                    text-[10px]
-
-                    tracking-[4px]
-
-                    uppercase
-                    "
-                  >
+                  <div className="mt-2 text-[#d4b483] text-[9px] tracking-[3px] uppercase opacity-90">
                     {item.label}
                   </div>
                 </div>
@@ -395,59 +206,25 @@ export default function Countdown() {
           </div>
         </motion.div>
 
-        {/* Quote */}
-
+        {/* Love Quote */}
         <motion.div
-          initial={{
-            opacity: 0,
-          }}
-          whileInView={{
-            opacity: 1,
-          }}
-          viewport={{
-            once: true,
-          }}
-          transition={{
-            delay: 0.5,
-          }}
-          className="
-          mt-14
-          text-center
-          "
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3 }}
+          className="mt-12 text-center select-none"
         >
-          <div
-            className="
-            w-24
-            h-px
-            bg-gradient-to-r
-            from-transparent
-            via-[#d4b483]
-            to-transparent
-            mx-auto
-            mb-8
-            "
-          />
-
+          <div className="w-20 h-px bg-gradient-to-r from-transparent via-[#d4b483]/60 to-transparent mx-auto mb-6" />
           <p
-            className="
-            text-[28px]
-
-            leading-relaxed
-
-            italic
-
-            text-white/80
-            "
+            className="text-[24px] leading-relaxed italic text-white/80 px-2"
             style={{
-              fontFamily:
-                "var(--font-cormorant)",
+              fontFamily: "var(--font-cormorant), serif",
             }}
           >
-            “And at the end of all roads,
-            I still found my way back
-            to you.”
+            “And at the end of all roads, I still found my way back to you.”
           </p>
         </motion.div>
+
       </div>
     </section>
   );
