@@ -11,7 +11,11 @@ const particles = Array.from({ length: 24 }, (_, i) => ({
   delay: i * 0.4,
 }));
 
-export default function MusicPlayer() {
+interface MusicPlayerProps {
+  guestName?: string;
+}
+
+export default function MusicPlayer({ guestName = "Tamu Undangan" }: MusicPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [opened, setOpened] = useState(false);
 
@@ -205,16 +209,16 @@ export default function MusicPlayer() {
                   className="
                   flex
                   justify-center
-                  mb-6
+                  mb-5
                   "
                 >
                   <div
                     className="
                     h-px
-                    w-20
+                    w-16
                     bg-gradient-to-r
                     from-transparent
-                    via-[#d4b483]
+                    via-[#d4b483]/70
                     to-transparent
                     "
                   />
@@ -228,16 +232,18 @@ export default function MusicPlayer() {
                   }}
                   animate={{
                     opacity: 1,
-                    y: 0,
+                    y: 0
                   }}
                   transition={{
                     duration: 1,
                   }}
                   className="
                   uppercase
-                  tracking-[0.4em]
+                  tracking-[0.5em]
                   text-[#d4b483]
-                  text-[9px]
+                  text-[8.5px]
+                  font-medium
+                  pl-[0.5em]
                   "
                 >
                   THE WEDDING OF
@@ -259,12 +265,12 @@ export default function MusicPlayer() {
                     duration: 1.5,
                   }}
                   className="
-                  mt-6
+                  mt-5
                   text-white
-                  text-[46px]
-                  leading-[0.9]
-                  tracking-[-0.03em]
-                  drop-shadow-[0_8px_30px_rgba(0,0,0,0.8)]
+                  text-[48px]
+                  leading-[0.85]
+                  tracking-[-0.02em]
+                  drop-shadow-[0_8px_25px_rgba(0,0,0,0.5)]
                   "
                   style={{
                     fontFamily:
@@ -284,8 +290,10 @@ export default function MusicPlayer() {
                   }}
                   className="
                   my-1
-                  text-[#d4b483]
-                  text-[24px]
+                  text-[#d4b483]/90
+                  text-[22px]
+                  italic
+                  font-light
                   "
                   style={{
                     fontFamily:
@@ -311,10 +319,10 @@ export default function MusicPlayer() {
                   }}
                   className="
                   text-white
-                  text-[46px]
-                  leading-[0.9]
-                  tracking-[-0.03em]
-                  drop-shadow-[0_8px_30px_rgba(0,0,0,0.8)]
+                  text-[48px]
+                  leading-[0.85]
+                  tracking-[-0.02em]
+                  drop-shadow-[0_8px_25px_rgba(0,0,0,0.5)]
                   "
                   style={{
                     fontFamily:
@@ -330,18 +338,19 @@ export default function MusicPlayer() {
                     opacity: 0,
                   }}
                   animate={{
-                    opacity: 1,
+                    opacity: 0.8,
                   }}
                   transition={{
                     delay: 0.6,
                   }}
                   className="
-                  mt-6
-                  text-white/75
+                  mt-5
+                  text-white/80
                   uppercase
-                  tracking-[0.2em]
-                  text-[10px]
-                  leading-relaxed
+                  tracking-[0.3em]
+                  text-[9px]
+                  font-light
+                  pl-[0.3em]
                   "
                 >
                   Forever Begins Here
@@ -350,13 +359,13 @@ export default function MusicPlayer() {
                 {/* Center Line Divider */}
                 <div
                   className="
-                  w-24
+                  w-20
                   h-px
                   mx-auto
-                  mt-6
+                  mt-5
                   bg-gradient-to-r
                   from-transparent
-                  via-[#d4b483]
+                  via-[#d4b483]/50
                   to-transparent
                   "
                 />
@@ -373,14 +382,43 @@ export default function MusicPlayer() {
                     delay: 0.8,
                   }}
                   className="
-                  mt-6
+                  mt-5
                   text-white/90
-                  text-[11px]
-                  tracking-[0.3em]
+                  text-[10px]
+                  tracking-[0.35em]
+                  font-medium
+                  pl-[0.35em]
                   "
                 >
                   12 JULY 2026
                 </motion.p>
+
+                {/* ========================================== */}
+                {/* AREA PERSONALISASI NAMA TAMU (TEROPTIMASI) */}
+                {/* ========================================== */}
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1, duration: 1 }}
+                  className="mt-9 px-2 flex flex-col items-center select-none"
+                >
+                  <p className="text-white/45 text-[8.5px] tracking-[0.25em] uppercase font-medium pl-[0.25em]">
+                    Kepada Yth. Bapak/Ibu/Saudara/i:
+                  </p>
+                  
+                  {/* Garis aksen tipis di atas nama */}
+                  <div className="h-[0.5px] w-8 bg-[#d4b483]/30 mt-3" />
+                  
+                  <h3 
+                    className="text-[#d4b483] text-[24px] font-bold mt-2.5 tracking-wide capitalize drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)] leading-snug"
+                    style={{ fontFamily: "var(--font-cormorant)" }}
+                  >
+                    {guestName}
+                  </h3>
+                  
+                  {/* Garis aksen tipis di bawah nama */}
+                  <div className="h-[0.5px] w-8 bg-[#d4b483]/30 mt-2.5" />
+                </motion.div>
 
                 {/* Open Invitation Button */}
                 <motion.button
@@ -403,17 +441,19 @@ export default function MusicPlayer() {
                   }}
                   onClick={openInvitation}
                   className="
-                  mt-8
+                  mt-7
                   w-full
                   py-3.5
                   rounded-full
                   border
-                  border-[#d4b483]
+                  border-[#d4b483]/80
                   bg-white/5
                   backdrop-blur-md
                   text-[#d4b483]
-                  text-[10px]
-                  tracking-[0.25em]
+                  text-[9.5px]
+                  tracking-[0.3em]
+                  font-semibold
+                  pl-[0.3em]
                   transition-all
                   duration-500
                   hover:bg-[#d4b483]
@@ -435,16 +475,16 @@ export default function MusicPlayer() {
                   className="
                   flex
                   justify-center
-                  mt-10
+                  mt-9
                   "
                 >
                   <div
                     className="
-                    w-6
-                    h-10
+                    w-5
+                    h-9
                     rounded-full
                     border
-                    border-white/20
+                    border-white/15
                     flex
                     justify-center
                     pt-1.5
@@ -452,17 +492,17 @@ export default function MusicPlayer() {
                   >
                     <motion.div
                       animate={{
-                        y: [0, 12, 0],
+                        y: [0, 10, 0],
                       }}
                       transition={{
                         duration: 2,
                         repeat: Infinity,
                       }}
                       className="
-                      w-1
-                      h-1
+                      w-[3px]
+                      h-[3px]
                       rounded-full
-                      bg-[#d4b483]
+                      bg-[#d4b483]/80
                       "
                     />
                   </div>

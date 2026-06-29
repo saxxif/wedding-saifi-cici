@@ -13,7 +13,7 @@ const events = [
     time: "07.00 WIB - Selesai",
     place: "Masjid Agung Bangkalan",
     address: "Jl. KH. Moh. Kholil, Bangkalan, Madura",
-    mapLink: "https://maps.app.goo.gl/TUZzpRyyXkAUYRXL7", // Ganti dengan link maps aslimu
+    mapLink: "https://maps.app.goo.gl/bmVAXHddyEqWpqhE6", // Ganti dengan link maps aslimu
   },
   {
     type: "Wedding Reception",

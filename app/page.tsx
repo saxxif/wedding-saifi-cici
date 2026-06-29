@@ -9,9 +9,15 @@ import EventDetail from "@/components/EventDetail";
 import Gallery from "@/components/Gallery";
 import LoveQuote from "@/components/LoveQuote";
 import WeddingGift from "@/components/WeddingGift";
-import RSVP from "@/components/RSVP";
+import RSVP from "@/components/RSVP"; 
 
-export default function Home() {
+// 1. Tambahkan interface untuk mendefinisikan tipe data props
+interface HomeProps {
+  guestName?: string;
+}
+
+// 2. Terima parameter guestName di dalam fungsi Home
+export default function Home({ guestName }: HomeProps) {
   return (
     <main
       className="
@@ -32,24 +38,22 @@ export default function Home() {
         shadow-[0_0_50px_rgba(0,0,0,0.08)]
         "
       >
-        <MusicPlayer />
+        {/* 3. Sekarang guestName sudah bisa dibaca tanpa eror */}
+        <MusicPlayer guestName={guestName} />
 
-        <Hero  />
+        <Hero />
 
         <BrideGroom />
+         <EventDetail />
 
-        <OurStory />
-
+        
         <Countdown />
-
-        <EventDetail />
+                <OurStory />
 
         <Gallery />
 
-        <LoveQuote />
-
         <WeddingGift />
-
+        
         <RSVP />
       </div>
     </main>
