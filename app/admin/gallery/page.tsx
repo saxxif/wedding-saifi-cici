@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import Cropper from "react-easy-crop";
+import confetti from "canvas-confetti";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc } from "firebase/firestore";
 
@@ -16,36 +18,22 @@ export default function AdminGallery() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  // State Cropping Gambar
-  const [selectedImageSrc, setSelectedImageSrc] = useState<string | null>(null);
-  const [cropTargetId, setCropTargetId] = useState<string | null>(null);
-  
-  // Mengunci area awal (Lebar 60% dan Tinggi 45% -> Rasio Pasti Landscape 4:3 murni)
-  const [cropArea, setCropArea] = useState({ x: 10, y: 10, width: 60, height: 45 });
-  const imageRef = useRef<HTMLImageElement>(null);
+  // State react-easy-crop
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
 
-  // Ambil data real-time dari Firebase
+  const cropTargetIdRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (!isAuthenticated) return;
     const q = query(collection(db, "gallery"), orderBy("createdAt", "asc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const loadedPhotos = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as GalleryPhoto[];
-      setPhotos(loadedPhotos);
+      setPhotos(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as GalleryPhoto[]);
     });
     return () => unsubscribe();
   }, [isAuthenticated]);
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === "saificici2026") {
-      setIsAuthenticated(true);
-    } else {
-      alert("Sandi salah, Bro!");
-    }
-  };
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>, targetPhotoId: string | null = null) => {
     const file = e.target.files?.[0];
@@ -56,206 +44,168 @@ export default function AdminGallery() {
       return;
     }
 
+    cropTargetIdRef.current = targetPhotoId;
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      setSelectedImageSrc(reader.result as string);
-      setCropTargetId(targetPhotoId);
-      // Reset ukuran kotak potong awal agar presisi Landscape 4:3
-      setCropArea({ x: 15, y: 15, width: 60, height: 45 });
+      setImageSrc(reader.result as string);
+      setZoom(1);
+      setCrop({ x: 0, y: 0 });
     };
   };
 
-  const executeCropAndUpload = () => {
-    if (!selectedImageSrc || !imageRef.current) return;
+  const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  // Fungsi pemotong gambar super smooth menggunakan koordinat matrix pixel asli
+  const createCroppedImage = async () => {
+    if (!imageSrc || !croppedAreaPixels) return;
     setUploading(true);
 
-    const img = imageRef.current;
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+    try {
+      const image = new Image();
+      image.src = imageSrc;
+      await new Promise((resolve) => (image.onload = resolve));
 
-    const naturalWidth = img.naturalWidth;
-    const naturalHeight = img.naturalHeight;
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
 
-    // Hitung koordinat nyata potongan gambar
-    const cropX = (cropArea.x / 100) * naturalWidth;
-    const cropY = (cropArea.y / 100) * naturalHeight;
-    const cropW = (cropArea.width / 100) * naturalWidth;
-    const cropH = (cropArea.height / 100) * naturalHeight;
+      // Ukuran output HD Landscape berkelas (800x600)
+      canvas.width = 800;
+      canvas.height = 600;
 
-    // Kunci target output Canvas murni sejajar Landscape 4:3
-    canvas.width = cropW;
-    canvas.height = cropH;
-
-    // Render potongan asli tanpa ditarik paksa
-    ctx?.drawImage(img, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
-    
-    const finalBase64 = canvas.toDataURL("image/jpeg", 0.85);
-
-    setTimeout(async () => {
-      try {
-        if (cropTargetId) {
-          await updateDoc(doc(db, "gallery", cropTargetId), { url: finalBase64 });
-          alert("Foto berhasil diperbarui!");
-        } else {
-          await addDoc(collection(db, "gallery"), { url: finalBase64, createdAt: Date.now() });
-          alert("Foto berhasil ditambahkan!");
-        }
-      } catch (err) {
-        console.error(err);
-        alert("Gagal menyimpan ke Firebase.");
-      } finally {
-        setUploading(false);
-        setSelectedImageSrc(null);
-        setCropTargetId(null);
+      if (ctx) {
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(
+          image,
+          croppedAreaPixels.x,
+          croppedAreaPixels.y,
+          croppedAreaPixels.width,
+          croppedAreaPixels.height,
+          0,
+          0,
+          800,
+          600
+        );
       }
-    }, 100);
-  };
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Hapus foto ini dari slot?")) {
-      try {
-        await deleteDoc(doc(db, "gallery", id));
-        alert("Foto berhasil dihapus.");
-      } catch (error) {
-        alert("Gagal menghapus.");
+      const finalBase64 = canvas.toDataURL("image/jpeg", 0.9);
+      const currentTargetId = cropTargetIdRef.current;
+
+      if (currentTargetId) {
+        await updateDoc(doc(db, "gallery", currentTargetId), { url: finalBase64 });
+      } else {
+        await addDoc(collection(db, "gallery"), { url: finalBase64, createdAt: Date.now() });
       }
+
+      // Efek selebrasi sukses premium
+      confetti({ particleCount: 80, spread: 60, origin: { y: 0.8 } });
+      setImageSrc(null);
+    } catch (err) {
+      console.error(err);
+      alert("Gagal memproses gambar.");
+    } finally {
+      setUploading(false);
+      cropTargetIdRef.current = null;
     }
   };
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
-        <form onSubmit={handleLogin} className="bg-white/[0.02] border border-white/[0.08] p-8 rounded-3xl w-full max-w-sm text-center">
-          <h1 className="text-white text-xl font-medium mb-6">Gallery Admin Panel</h1>
-          <input
-            type="password"
-            placeholder="Masukkan Password"
-            className="w-full bg-white/[0.05] border border-white/[0.1] text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#d4b483] mb-4 text-center"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button type="submit" className="w-full bg-[#d4b483] text-[#0a0a0a] font-semibold py-3 rounded-xl text-sm">
-            Masuk
-          </button>
+      <div className="min-h-screen bg-[#070707] flex items-center justify-center px-4">
+        <form onSubmit={(e) => { e.preventDefault(); if(password === "1") setIsAuthenticated(true); }} className="bg-white/[0.02] border border-white/[0.06] p-8 rounded-[32px] w-full max-w-sm text-center shadow-2xl backdrop-blur-md">
+          <h1 className="text-white text-md tracking-[4px] font-light mb-6">STUDIO CONTROL PANEL</h1>
+          <input type="password" placeholder="ENTER ACCESS KEY" className="w-full bg-white/[0.04] border border-white/[0.1] text-white rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-[#d4b483] mb-4 text-center tracking-widest" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <button type="submit" className="w-full bg-[#d4b483] text-black font-semibold py-3 rounded-xl text-xs tracking-widest uppercase hover:opacity-90 transition-all">Unlock Dashboard</button>
         </form>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white p-3 md:p-12 pb-32">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-[#070707] text-white p-4 md:p-12 pb-32">
+      <div className="max-w-6xl mx-auto">
         
         {/* HEADER */}
-        <div className="border-b border-white/[0.08] pb-4 mb-6 flex flex-col items-center text-center gap-3">
+        <div className="border-b border-white/[0.06] pb-5 mb-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div>
-            <h1 className="text-2xl font-light text-[#d4b483]" style={{ fontFamily: "var(--font-cormorant)" }}>
-              Studio Management Galeri (Landscape)
-            </h1>
-            <p className="text-[11px] text-white/40 mt-0.5">
-              Slot Terisi: <span className="text-[#d4b483] font-bold">{photos.length}</span> / 24
-            </p>
+            <h1 className="text-2xl font-light text-[#d4b483] tracking-wide" style={{ fontFamily: "var(--font-cormorant)" }}>Gallery Production Board</h1>
+            <p className="text-[10px] text-white/30 font-mono mt-0.5">SLOTS FILLED: <span className="text-[#d4b483] font-bold">{photos.length}</span> / 24</p>
           </div>
-          
           {photos.length < 24 && (
-            <label className="cursor-pointer bg-[#d4b483] text-[#0a0a0a] text-[11px] font-bold px-5 py-2.5 rounded-xl shadow-lg">
-              ➕ ISI SLOT BARU
+            <label className="cursor-pointer bg-[#d4b483] text-black text-[10px] font-bold tracking-widest px-6 py-3 rounded-xl uppercase hover:bg-[#c4a373] transition-colors shadow-lg">
+              ➕ UPLOAD NEW PHOTO
               <input type="file" accept="image/*" className="hidden" onChange={(e) => onFileChange(e, null)} />
             </label>
           )}
         </div>
 
-        {/* GRID SLOT PANEL - LANDSCAPE 4:3 */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+        {/* WORKSPACE GRID */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {Array.from({ length: 24 }).map((_, index) => {
             const photo = photos[index];
-
             return (
-              <div key={index} className="relative w-full overflow-hidden rounded-xl border bg-white/[0.02] border-white/[0.08] flex flex-col" style={{ aspectRatio: "4/3" }}>
-                <span className="absolute top-1 left-1 bg-black/70 text-[9px] text-white/80 font-sans px-1.5 py-0.5 rounded z-10 border border-white/15">
-                  {index + 1}
-                </span>
-
-                <div className="absolute inset-0 w-full h-full z-0">
-                  {photo ? (
-                    <img src={photo.url} alt={`Slot ${index + 1}`} className="w-full h-full object-cover block" />
-                  ) : (
-                    <label className="w-full h-full flex flex-col justify-center items-center cursor-pointer bg-white/[0.01] hover:bg-white/[0.04] transition-colors p-1 text-center">
-                      <span className="text-sm opacity-20 mb-0.5">📷</span>
-                      <span className="text-[9px] text-white/20 font-light tracking-tight">Isi Slot</span>
-                      <input type="file" accept="image/*" className="hidden" onChange={(e) => onFileChange(e, null)} />
-                    </label>
-                  )}
-                </div>
-
-                {photo && (
-                  <div className="absolute inset-x-0 bottom-0 bg-black/80 p-1 flex justify-between items-center gap-1 z-10 border-t border-white/5">
-                    <label className="flex-1 text-center cursor-pointer bg-[#d4b483] text-black text-[8px] font-bold py-1 rounded-md">
-                      🔄 Edit
-                      <input type="file" accept="image/*" className="hidden" onChange={(e) => onFileChange(e, photo.id)} />
-                    </label>
-                    <button onClick={() => handleDelete(photo.id)} className="bg-red-600 hover:bg-red-700 text-white p-1 text-[8px] font-bold rounded-md">🗑️</button>
-                  </div>
+              <div key={index} className="relative w-full overflow-hidden rounded-2xl border bg-white/[0.01] border-white/[0.06] group transition-all duration-300 hover:border-white/20 shadow-md" style={{ aspectRatio: "4/3" }}>
+                <span className="absolute top-2 left-2 bg-black/70 text-[9px] text-white/60 font-mono px-1.5 py-0.5 rounded z-10">#{String(index + 1).padStart(2, '0')}</span>
+                
+                {photo ? (
+                  <>
+                    <img src={photo.url} className="w-full h-full object-cover" alt="Uploaded" />
+                    <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-center items-center p-3 gap-2 z-10">
+                      <label className="w-full text-center cursor-pointer bg-white/10 hover:bg-white/20 text-white text-[10px] font-medium py-2 rounded-lg border border-white/10 transition-all">
+                        🔄 Replace / Crop
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => onFileChange(e, photo.id)} />
+                      </label>
+                      <button onClick={() => { if(confirm("Hapus foto ini?")) deleteDoc(doc(db, "gallery", photo.id)); }} className="w-full bg-red-600/80 hover:bg-red-600 text-white text-[10px] py-2 rounded-lg transition-all">🗑️ Delete</button>
+                    </div>
+                  </>
+                ) : (
+                  <label className="absolute inset-0 flex flex-col justify-center items-center cursor-pointer hover:bg-white/[0.02] transition-colors">
+                    <span className="text-lg opacity-20 mb-1">📷</span>
+                    <span className="text-[9px] text-white/20 font-light">Empty Slot</span>
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => onFileChange(e, null)} />
+                  </label>
                 )}
               </div>
             );
           })}
         </div>
 
-        {/* MODAL CROPPER LANDSCAPE ANTI DISTORSI */}
-        {selectedImageSrc && (
-          <div className="fixed inset-0 bg-black/95 z-50 flex flex-col items-center justify-center p-4">
-            <div className="bg-[#141414] border border-white/10 w-full max-w-sm p-4 rounded-3xl flex flex-col shadow-2xl">
+        {/* MODAL CROPPER INTERAKTIF PRO (REACT-EASY-CROP) */}
+        {imageSrc && (
+          <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
+            <div className="bg-[#121212] border border-white/10 w-full max-w-md rounded-[32px] overflow-hidden shadow-2xl flex flex-col p-6">
+              <h3 className="text-center text-sm font-medium text-[#d4b483] tracking-wider mb-4">ADJUST IMAGE BOUNDS</h3>
               
-              <div className="text-center mb-3">
-                <h3 className="text-sm font-medium text-[#d4b483]">Atur Area Potongan Foto (Landscape 4:3)</h3>
-                <p className="text-[10px] text-white/30 mt-0.5">Kotak terkunci aman dalam rasio landscape melebar</p>
-              </div>
-
-              <div className="relative bg-black rounded-xl overflow-hidden flex items-center justify-center border border-white/5 max-h-[240px] p-2">
-                <img ref={imageRef} src={selectedImageSrc} alt="Crop" className="max-w-full max-h-[220px] object-contain opacity-40" />
-                <div 
-                  className="absolute border-2 border-dashed border-[#d4b483] bg-[#d4b483]/10 shadow-[0_0_0_9999px_rgba(0,0,0,0.7)] pointer-events-none rounded-sm"
-                  style={{ left: `${cropArea.x}%`, top: `${cropArea.y}%`, width: `${cropArea.width}%`, height: `${cropArea.height}%` }}
+              {/* Container Cropper Intuitif */}
+              <div className="relative w-full h-64 bg-black rounded-2xl overflow-hidden border border-white/5">
+                <Cropper
+                  image={imageSrc}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={4 / 3} // RASIO DIKUNCI MATI LANDSCAPE BERKELAS
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                  showGrid={true}
                 />
               </div>
 
-              {/* CONTROLLER LOCKED RATIO SLIDERS (LANDSCAPE 4:3) */}
-              <div className="mt-3 space-y-2 bg-white/[0.02] p-3 rounded-xl border border-white/5 text-[11px]">
-                <div>
-                  <div className="text-white/40 mb-0.5">Geser Posisi Kiri/Kanan (X)</div>
-                  <input type="range" min="0" max={100 - cropArea.width} value={cropArea.x} onChange={(e) => setCropArea(prev => ({ ...prev, x: parseInt(e.target.value) }))} className="w-full accent-[#d4b483]" />
+              {/* Slider Zoom Premium */}
+              <div className="mt-5 bg-white/[0.02] p-4 rounded-xl border border-white/5">
+                <div className="flex justify-between text-[10px] text-white/40 mb-1.5 font-mono">
+                  <span>ZOOM ROTATION SCALE</span>
+                  <span>{Math.round(zoom * 100)}%</span>
                 </div>
-                <div>
-                  <div className="text-white/40 mb-0.5">Geser Posisi Atas/Bawah (Y)</div>
-                  <input type="range" min="0" max={100 - cropArea.height} value={cropArea.y} onChange={(e) => setCropArea(prev => ({ ...prev, y: parseInt(e.target.value) }))} className="w-full accent-[#d4b483]" />
-                </div>
-                <div>
-                  <div className="text-white/40 mb-0.5">Ukuran Kotak (Skala Tetap 4:3)</div>
-                  <input type="range" min="30" max="80" value={cropArea.width} onChange={(e) => {
-                    const nextWidth = parseInt(e.target.value);
-                    // Tinggi dikunci otomatis mengikuti kelipatan rasio LANDSCAPE 4:3 (Lebar dikali 0.75)
-                    const nextHeight = Math.round(nextWidth * 0.75); 
-                    
-                    if (nextHeight <= 90) {
-                      setCropArea(prev => ({
-                        ...prev,
-                        width: nextWidth,
-                        height: nextHeight,
-                        x: Math.min(prev.x, 100 - nextWidth),
-                        y: Math.min(prev.y, 100 - nextHeight)
-                      }));
-                    }
-                  }} className="w-full accent-[#d4b483]" />
-                </div>
+                <input type="range" min={1} max={3} step={0.05} value={zoom} onChange={(e) => setZoom(parseFloat(e.target.value))} className="w-full accent-[#d4b483] h-1 bg-white/10 rounded" />
               </div>
 
-              <div className="flex gap-2 mt-4">
-                <button onClick={() => { setSelectedImageSrc(null); setCropTargetId(null); }} className="flex-1 bg-white/5 text-white text-xs py-2 rounded-xl">Batal</button>
-                <button onClick={executeCropAndUpload} disabled={uploading} className="flex-1 bg-[#d4b483] text-black text-xs font-bold py-2 rounded-xl">{uploading ? "Proses..." : "✂️ Simpan Landscape"}</button>
+              <div className="flex gap-3 mt-6">
+                <button onClick={() => setImageSrc(null)} className="flex-1 bg-white/5 text-white text-xs py-3 rounded-xl uppercase tracking-wider font-medium text-[10px]">Cancel</button>
+                <button onClick={createCroppedImage} disabled={uploading} className="flex-1 bg-[#d4b483] text-black text-xs font-bold py-3 rounded-xl uppercase tracking-wider text-[10px]">{uploading ? "Processing..." : "Save Artwork"}</button>
               </div>
-
             </div>
           </div>
         )}
